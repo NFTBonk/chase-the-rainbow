@@ -64,13 +64,13 @@ Here's a brief high-level overview of the tech stack the CTR game uses:
 >While the Noodles team laid the foundation for this project, we understand there are plenty of other features that can be implemented to enhance the community’s vision for this project. We encourage everybody to get involved and make contributions and suggestions, whether developers, artists, designers, lore creators, anybody!
 
 1. **Report a bug** 
- If you think you have encountered a bug, and we should know about it, feel free to report it [here]() and we will take care of it.
+ If you think you have encountered a bug, and we should know about it, feel free to report it [here](https://discord.gg/noodles-nft) and we will take care of it.
 
  2. **Request a feature** 
- You can also request for a feature [here](), and if it will viable, it will be picked for development.  
+ You can also request for a feature [here](https://discord.gg/noodles-nft), and if it will viable, it will be picked for development.  
 
  3. **Create a pull request** 
- It can't get better then this, your pull request will be appreciated by the community. You can get started by picking up any open issues from [here]() and make a pull request.
+ It can't get better then this, your pull request will be appreciated by the community. You can get started by picking up any open issues from [here](https://discord.gg/noodles-nft) and make a pull request.
 
  If you are new to open-source, make sure to check read more about it [here](https://www.digitalocean.com/community/tutorial_series/an-introduction-to-open-source) and learn more about creating a pull request [here](https://www.digitalocean.com/community/tutorials/how-to-create-a-pull-request-on-github).
  
