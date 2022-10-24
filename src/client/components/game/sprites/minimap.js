@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 const minimapSize = 200;
 const offsetX = 300;
 const offsetY = 220;
+const visibilityRadius = 2000;
 
 export default class Minimap extends Phaser.GameObjects.Graphics {
     
@@ -23,6 +24,8 @@ export default class Minimap extends Phaser.GameObjects.Graphics {
         this.strokeRoundedRect(0,0, minimapSize, minimapSize, 10);
         this.fillStyle(0xFFFFFF, 0.5);
         this.fillCircle(minimapSize * (playerposition.x / 18000), minimapSize * (playerposition.y / 18000), 5);
+        this.lineStyle(1, 0xffffff, 0.3);
+        this.strokeCircle(minimapSize * (playerposition.x / 18000), minimapSize * (playerposition.y / 18000), minimapSize * visibilityRadius / 18000);
 
         
         this.fillStyle(0xFF0000, 0.5);
