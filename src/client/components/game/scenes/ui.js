@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Leaderboard from '../sprites/leaderboard';
+import Minimap from '../sprites/minimap';
 import eventCenter from './eventCenter';
 
 const MARGIN_LEFT = 22;
@@ -34,6 +35,7 @@ class Ui extends Phaser.Scene {
     this.createScore();
     this.createFuel();
     this.createControlInfo();
+    this.createMinimap();
 
     // background meter
     this.fuelBarOuter = this.createFuelBar(
@@ -144,6 +146,10 @@ class Ui extends Phaser.Scene {
       const marginBottom1 = this.cameras.main.height - 45;
       this.controlInfo.setY(marginBottom1);
     }));
+  }
+
+  createMinimap() {
+    var minimap = new Minimap(this, {x: this.cameras.main.width, y: this.cameras.main.height});
   }
 
   createFuelBar(x, y, width, height, color, alpha) {
