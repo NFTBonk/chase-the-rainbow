@@ -68,6 +68,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('playerScore', this.updateScore, this); // listen for score updates
     eventCenter.on('playerFuel', this.updateFuelBar, this); // listen for fuel updates
     eventCenter.on('lb', this.lb.updateLeaderboard, this.lb); // listen for leaderboard updates
+    eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
   }
 
   /** Adds callback to keypress on M and initializes audio as unmuted. */
@@ -149,7 +150,7 @@ class Ui extends Phaser.Scene {
   }
 
   createMinimap() {
-    var minimap = new Minimap(this, {x: this.cameras.main.width, y: this.cameras.main.height});
+    this.minimap = new Minimap(this, {x: this.cameras.main.width, y: this.cameras.main.height});
   }
 
   createFuelBar(x, y, width, height, color, alpha) {
