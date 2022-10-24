@@ -6,6 +6,10 @@ import eventCenter from './eventCenter';
 import constants from '../../../../shared/constants';
 import Player from '../sprites/player';
 import DeathScreen from '../../deathScreen/index';
+
+
+//Private Reference for PlayerMap
+const _playerMap = Symbol("PlayerMap");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -160,7 +164,7 @@ export default class MainMap extends Phaser.Scene {
 
     // Used to manage player/rainbow bit/fuel tank creation, deletion, and update.
     const playerIds = new Set();
-    const playerMap = new Map();
+    this[_playerMap] = new Map();
     const entityIds = new Set();
     const entityMap = new Map();
 
@@ -175,10 +179,10 @@ export default class MainMap extends Phaser.Scene {
         if (!playerIds.has(player.id)) {
           playerIds.add(player.id);
           // Player is created.
-          playerMap.set(player.id, this.add.player(0, 0, false, player.nft).setDepth(6));
+          this[_playerMap].set(player.id, this.add.player(0, 0, false, player.nft).setDepth(6));
         } else {
           // Player is updated.
-          const playerToUpdate = playerMap.get(player.id);
+          const playerToUpdate = this[_playerMap].get(player.id);
           playerToUpdate.pushFrame(player);
         }
       });
@@ -186,10 +190,10 @@ export default class MainMap extends Phaser.Scene {
       playerIds.forEach((playerId) => {
         if (!newPlayerIds.has(playerId)) {
           // Player is deleted.
-          const playerToDelete = playerMap.get(playerId);
+          const playerToDelete = this[_playerMap].get(playerId);
           playerToDelete.destroy();
           playerIds.delete(playerId);
-          playerMap.delete(playerId);
+          this[_playerMap].delete(playerId);
         }
       });
 
@@ -213,7 +217,7 @@ export default class MainMap extends Phaser.Scene {
         if (entity.collectedBy && entityMap.has(entity.id) && (entity.collectedBy === this.socket.id || playerIds.has(entity.collectedBy)) && !this.magnet.hasOwnProperty(entity.id)) {
           this.magnet[entity.id] = entity.collectedBy;
           // get player
-          const player = entity.collectedBy === this.socket.id ? this.localPlayerSprite : playerMap.get(entity.collectedBy);
+          const player = entity.collectedBy === this.socket.id ? this.localPlayerSprite : this[_playerMap].get(entity.collectedBy);
           // get entity
           const entityToUpdate = entityMap.get(entity.id);
           const entityArray = Array.from(entityMap.values());
@@ -290,7 +294,7 @@ export default class MainMap extends Phaser.Scene {
       this.spaceKeyPressed = false;
     }
     
-    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y});
+    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, playerMap: this[_playerMap]});
     
     if (spacebar !== this.spaceKeyPressed) {
       this.socket.emit('spacebar', this.spaceKeyPressed);
