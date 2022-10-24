@@ -13,7 +13,7 @@ function App() {
   const [walletAddress, setWallet] = useState('');
   const [status, setStatus] = useState('');
   const [nfts, setNfts] = useState([]);
-  const mockNfts = false;
+  const mockNfts = true;
 
   //janky way of favicon
   const link = document.querySelector("link[rel*='icon']") || document.createElement('link');

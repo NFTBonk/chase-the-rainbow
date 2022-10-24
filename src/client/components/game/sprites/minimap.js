@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 const minimapSize = 200;
 const offsetX = 300;
 const offsetY = 220;
-const visibilityRadius = 2000;
+const visibilityRadius = 6000;
 
 export default class Minimap extends Phaser.GameObjects.Graphics {
     
