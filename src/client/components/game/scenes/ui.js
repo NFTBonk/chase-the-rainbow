@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import Leaderboard from '../sprites/leaderboard';
+import Minimap from '../sprites/minimap';
 import eventCenter from './eventCenter';
 
 const MARGIN_LEFT = 22;
@@ -34,6 +35,7 @@ class Ui extends Phaser.Scene {
     this.createScore();
     this.createFuel();
     this.createControlInfo();
+    this.createMinimap();
 
     // background meter
     this.fuelBarOuter = this.createFuelBar(
@@ -66,6 +68,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('playerScore', this.updateScore, this); // listen for score updates
     eventCenter.on('playerFuel', this.updateFuelBar, this); // listen for fuel updates
     eventCenter.on('lb', this.lb.updateLeaderboard, this.lb); // listen for leaderboard updates
+    eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
   }
 
   /** Adds callback to keypress on M and initializes audio as unmuted. */
@@ -144,6 +147,10 @@ class Ui extends Phaser.Scene {
       const marginBottom1 = this.cameras.main.height - 45;
       this.controlInfo.setY(marginBottom1);
     }));
+  }
+
+  createMinimap() {
+    this.minimap = new Minimap(this, {x: this.cameras.main.width, y: this.cameras.main.height});
   }
 
   createFuelBar(x, y, width, height, color, alpha) {

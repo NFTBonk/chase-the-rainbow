@@ -235,7 +235,7 @@ setInterval(() => {
   // This current version will be an expensive update of everything, but
   // eventually a running cache of frames can be stored to calculate a diff.
   players.forEach((player) => {
-    let playersInRadius = players.getAllEntitiesWithinRadius(player.x, player.y, 2000);
+    let playersInRadius = players.getAllEntitiesWithinRadius(player.x, player.y, 6000);
     if (playersInRadius.has(player)) {
       playersInRadius.delete(player);
     }
