@@ -33,12 +33,15 @@ export default class FuelBar extends Phaser.GameObjects.Container {
         this.add(this.fuelFill);
         this.add(fuelOutline);
         scene.add.existing(this);
+
+        this.currentPercentage = 1;
     }
 
-    updateFuelDisplay(fuelPercentage) {
+    updateFuelDisplay(fuelPercentage, delta) {
+        this.currentPercentage = this.currentPercentage + (fuelPercentage - this.currentPercentage) * delta;
         this.fuelFill.clear();
         this.fuelFill.fillStyle(0xFFA4D4, 1);
-        this.fuelFill.fillRect(10, 10 + ((barHeight - 20) * (1 - fuelPercentage)), barWidth - 20 , (barHeight - 20) * fuelPercentage);
+        this.fuelFill.fillRect(10, 10 + ((barHeight - 20) * (1 - this.currentPercentage)), barWidth - 20 , (barHeight - 20) * this.currentPercentage);
     }
 
     // updatePlayerPositions(playerposition) {

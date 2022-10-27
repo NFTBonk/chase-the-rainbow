@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import FuelBar from '../sprites/fuelbar';
 import Leaderboard from '../sprites/leaderboard';
 import eventCenter from './eventCenter';
 
@@ -34,6 +35,7 @@ class Ui extends Phaser.Scene {
     this.createScore();
     this.createFuel();
     this.createControlInfo();
+    this.createNewFuelBar();
 
     // background meter
     this.fuelBarOuter = this.createFuelBar(
@@ -92,6 +94,10 @@ class Ui extends Phaser.Scene {
     }
   }
 
+  createNewFuelBar() {
+    this.newFuelBar = new FuelBar(this, 0, 0).setScrollFactor(0);
+  }
+
   createScore() {
     let scoreHeader = this.add.text(
       MARGIN_LEFT, MARGIN_TOP - 45, SCORE_PREFIX, 
@@ -107,7 +113,7 @@ class Ui extends Phaser.Scene {
     scoreContainer.fillStyle(0xFFFFFF, 1);
     scoreContainer.fillRoundedRect(10,10, 160, 35, 10);
     this.score = this.add
-      .text(MARGIN_LEFT + scoreHeader.width + 180, MARGIN_TOP - 45, SCORE_INIT, {
+      .text(MARGIN_LEFT + scoreHeader.width + 160, MARGIN_TOP - 45, SCORE_INIT, {
         fontFamily: 'Pangolin', fontSize: SCORE_FONT_SIZE, color: '#000000', align: 'right'
       })
       .setDepth(100).setOrigin(1, 0);
@@ -198,6 +204,8 @@ class Ui extends Phaser.Scene {
         this.fuelBarInner.scaleX / IMAGE_SCALE_X - delta / 4000, this.fuelBarValue,
       );
     }
+
+    this.newFuelBar.updateFuelDisplay(this.fuelBarValue, delta / 100);
 
     // Update center x in order to left-align as width changes
     const widthAfterScaling = IMAGE_DIMENSION * this.fuelBarInner.scaleX;
