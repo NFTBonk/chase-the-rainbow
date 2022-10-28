@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import FuelBar from '../sprites/fuelbar';
 import Leaderboard from '../sprites/leaderboard';
+import Minimap from '../sprites/minimap';
 import eventCenter from './eventCenter';
 
 const MARGIN_LEFT = 22;
@@ -25,6 +26,7 @@ class Ui extends Phaser.Scene {
     this.createFuel();
     this.createControlInfo();
     this.createNewFuelBar();
+    this.createMinimap();
 
     this.fuelBarValue = 1; // value in range [0, 1]
     this.previousScore = 0;
@@ -36,6 +38,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('playerFuel', this.updateFuelBar, this); // listen for fuel updates
     eventCenter.on('spacebar', this.onUseGas, this); // listen for fuel updates
     eventCenter.on('lb', this.lb.updateLeaderboard, this.lb); // listen for leaderboard updates
+    eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
   }
 
   /** Adds callback to keypress on M and initializes audio as unmuted. */
@@ -134,6 +137,9 @@ class Ui extends Phaser.Scene {
     }));
   }
 
+  createMinimap() {
+    this.minimap = new Minimap(this, {x: this.cameras.main.width, y: this.cameras.main.height});
+  }
   /** Restricts fuel bar value to [0, 1]. */
   updateFuelBar(currentFuel) {
     // Only play sfx when fuel level increases, i.e. fuel has been picked up
