@@ -297,6 +297,7 @@ export default class MainMap extends Phaser.Scene {
     eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, playerMap: this[_playerMap]});
     
     if (spacebar !== this.spaceKeyPressed) {
+      eventCenter.emit('spacebar', this.spaceKeyPressed);
       this.socket.emit('spacebar', this.spaceKeyPressed);
     }
   }
