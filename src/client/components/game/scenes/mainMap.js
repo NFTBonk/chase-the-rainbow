@@ -104,6 +104,8 @@ export default class MainMap extends Phaser.Scene {
 
     this.localPlayerSprite = this.add.player(0, 0, true, this.myNFT).setDepth(6);
 
+    this.cameras.main.centerOn(9000, 9000);
+
     this.localPlayerSprite.on('spawn', () => {
       this.respawnButton.style.display = 'none';
     });

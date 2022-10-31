@@ -48,6 +48,10 @@ export default class Player extends Phaser.GameObjects.Container {
         }
       });
       loader.start();
+
+      this.setVisible(false);
+      this.shipSprite.setAlpha(0);
+      this.nameTag.setAlpha(0);
     }
   }
 
@@ -200,7 +204,7 @@ export default class Player extends Phaser.GameObjects.Container {
       this.score = nextTimestampFrame.frame.score;
     }
 
-    if (this.isLocalPlayer) {
+    if (this.isLocalPlayer && this.visible == true) {
       this.scene.cameras.main.centerOn(this.x, this.y);
     }
 
