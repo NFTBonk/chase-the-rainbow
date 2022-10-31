@@ -75,6 +75,7 @@ export default class Player extends Phaser.GameObjects.Container {
     this.trailMesh.setAlpha(1);
     this.setAngle((state.angle / Math.PI) * 180);
     this.setPosition(state.x, state.y);
+    this.scene.cameras.main.startFollow(this);
   }
 
   onDeath() {
@@ -213,9 +214,9 @@ export default class Player extends Phaser.GameObjects.Container {
       this.score = nextTimestampFrame.frame.score;
     }
 
-    if (this.isLocalPlayer && this.visible == true) {
-      this.scene.cameras.main.centerOn(this.x, this.y);
-    }
+    // if (this.isLocalPlayer && this.visible == true) {
+    //   this.scene.cameras.main.centerOn(this.x, this.y);
+    // }
 
     this.trailMesh.clear();
     if (this.trailPoints.length > 0) {

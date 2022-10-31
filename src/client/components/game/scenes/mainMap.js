@@ -104,7 +104,7 @@ export default class MainMap extends Phaser.Scene {
 
     this.localPlayerSprite = this.add.player(0, 0, true, this.myNFT).setDepth(6);
 
-    this.cameras.main.centerOn(0, 0);
+    // this.cameras.main.setScroll(9000, 9000);
 
     this.localPlayerSprite.on('spawn', () => {
       this.respawnButton.style.display = 'none';
@@ -286,8 +286,10 @@ export default class MainMap extends Phaser.Scene {
   update() {
     // background movement
     this.bg.setTilePosition(this.cameras.main.scrollX, this.cameras.main.scrollY);
-    this.bg.x = this.localPlayerSprite.x - (this.cameras.main.displayWidth / 2);
-    this.bg.y = this.localPlayerSprite.y - (this.cameras.main.displayHeight / 2);
+    if(this.localPlayerSprite.visible == true) {
+      this.bg.x = this.localPlayerSprite.x - (this.cameras.main.displayWidth / 2);
+      this.bg.y = this.localPlayerSprite.y - (this.cameras.main.displayHeight / 2);
+    }
 
     const spacebar = this.spaceKeyPressed;
     if (this.cursors.space.isDown) {
