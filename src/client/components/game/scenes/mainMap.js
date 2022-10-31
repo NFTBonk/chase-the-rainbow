@@ -104,7 +104,7 @@ export default class MainMap extends Phaser.Scene {
 
     this.localPlayerSprite = this.add.player(0, 0, true, this.myNFT).setDepth(6);
 
-    this.cameras.main.centerOn(9000, 9000);
+    this.cameras.main.centerOn(0, 0);
 
     this.localPlayerSprite.on('spawn', () => {
       this.respawnButton.style.display = 'none';
@@ -296,7 +296,7 @@ export default class MainMap extends Phaser.Scene {
       this.spaceKeyPressed = false;
     }
     
-    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, playerMap: this[_playerMap]});
+    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap]});
     
     if (spacebar !== this.spaceKeyPressed) {
       eventCenter.emit('spacebar', this.spaceKeyPressed);
