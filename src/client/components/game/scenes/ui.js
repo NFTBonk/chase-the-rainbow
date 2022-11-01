@@ -5,7 +5,7 @@ import Minimap from '../sprites/minimap';
 import eventCenter from './eventCenter';
 
 const MARGIN_LEFT = 22;
-const MARGIN_TOP = 76;
+const MARGIN_TOP = 31;
 const SCORE_PREFIX = 'Score: ';
 const FUEL_PREFIX = 'Fuel';
 const SCORE_INIT = 0;
@@ -70,35 +70,46 @@ class Ui extends Phaser.Scene {
   }
 
   createScore() {
+    let scoreGroup = this.add.container(0, 0);
     let scoreHeader = this.add.text(
-      MARGIN_LEFT, MARGIN_TOP - 45, SCORE_PREFIX, 
+      0, 0, SCORE_PREFIX, 
       {
         fontFamily: 'Pangolin',
         fontSize: SCORE_FONT_SIZE
       }
     ).setDepth(100);
-
-    let scoreContainer = this.add.graphics({x: scoreHeader.x + scoreHeader.width, y: scoreHeader.y - scoreHeader.height * 0.5 + 5});
+    scoreGroup.add(scoreHeader);
+    let scoreContainer = this.add.graphics({x: scoreHeader.width, y: - scoreHeader.height * 0.5 + 5});
     scoreContainer.fillStyle(0xFFFFFF, 0.5);
     scoreContainer.fillRoundedRect(0, 0, 180, 55, 10);
     scoreContainer.fillStyle(0xFFFFFF, 1);
     scoreContainer.fillRoundedRect(10,10, 160, 35, 10);
+    scoreGroup.add(scoreContainer);
     this.score = this.add
-      .text(MARGIN_LEFT + scoreHeader.width + 160, MARGIN_TOP - 45, SCORE_INIT.toLocaleString(), {
+      .text(scoreHeader.width + 160, 0, SCORE_INIT.toLocaleString(), {
         fontFamily: 'Pangolin', fontSize: SCORE_FONT_SIZE, color: '#000000', align: 'right'
       })
       .setDepth(100).setOrigin(1, 0);
+    scoreGroup.add(this.score);
+    this.scene.scene.plugins.get('rexanchorplugin').add(scoreGroup, {
+      left: 'left+'+MARGIN_LEFT,
+      top: 'top+'+MARGIN_TOP
+    });
     this.score.setScrollFactor(0);
   }
 
   createFuel() {
-    const marginBottom = this.cameras.main.height - 45;
+    // const marginBottom = this.cameras.main.height - 45;
     this.fuel = this.add
-      .text(MARGIN_LEFT, marginBottom, FUEL_PREFIX, {
+      .text(0, 0, FUEL_PREFIX, {
         fontFamily: 'Pangolin', fontSize: SCORE_FONT_SIZE
       })
       .setDepth(100);
     this.fuel.setScrollFactor(0);
+    this.scene.scene.plugins.get('rexanchorplugin').add(this.fuel, {
+      left: 'left+'+MARGIN_LEFT,
+      bottom: 'bottom-'+MARGIN_TOP
+    });
   }
 
   updateScore(currentScore) {

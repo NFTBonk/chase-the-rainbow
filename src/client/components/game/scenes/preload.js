@@ -66,6 +66,9 @@ class Preload extends Phaser.Scene {
     // Audio
     this.load.audio('rainbowPickup', rainbowPickupAudio);
     this.load.audio('fuelPickup', fuelPickupAudio);
+
+    this.load.plugin('rexanchorplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexanchorplugin.min.js', true);
+
   }
 
   create() {
