@@ -31,7 +31,7 @@ class Preload extends Phaser.Scene {
   }
 
   preload() {
-    this.add.text(20, 20, 'Loading...', {fontFamily: 'Pangolin'});
+    this.add.text(this.scale.baseSize.width * 0.5, this.scale.baseSize.height * 0.5, 'Loading...', {fontFamily: 'Pangolin'});
 
     // Map and UI
     this.load.image('bg0', bg0Image);
@@ -66,9 +66,6 @@ class Preload extends Phaser.Scene {
     // Audio
     this.load.audio('rainbowPickup', rainbowPickupAudio);
     this.load.audio('fuelPickup', fuelPickupAudio);
-
-    this.load.plugin('rexanchorplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexanchorplugin.min.js', true);
-
   }
 
   create() {

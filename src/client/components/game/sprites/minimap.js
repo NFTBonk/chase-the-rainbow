@@ -8,21 +8,13 @@ const visibilityRadius = 6000;
 export default class Minimap extends Phaser.GameObjects.Graphics {
     
     constructor(scene, options) {
-        options.x = options.x - offsetX;
-        options.y = options.y - offsetY;
         super(scene, options);
 
-        let shapeMask = scene.make.graphics();
-        shapeMask.fillStyle(0xFFFFFF, 1);
-
-        shapeMask.fillRect(options.x,options.y, minimapSize, minimapSize);
-        let mask = shapeMask.createGeometryMask();
+        
 
         this.lineStyle(2.5, 0xffffff, 0.5);
         this.strokeRoundedRect(0,0, minimapSize, minimapSize, 10);
         scene.add.existing(this);
-        this.setMask(mask);
-
     }
 
     updatePlayerPositions(playerposition) {

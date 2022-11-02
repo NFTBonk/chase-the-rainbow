@@ -5,20 +5,15 @@ const MARGIN_TOP = 10;
 const LB_FONT_SIZE = '30px';
 
 export default class Leaderboard extends Phaser.GameObjects.Container {
-  constructor(scene) {
-    super(scene, 'leaderboard');
-    const { width } = scene.sys.game.canvas;
+  constructor(scene, x , y) {
+    super(scene, x, y);
     this.lbText = scene.add
-      .text(width - MARGIN_LEFT, MARGIN_TOP, '', { fontFamily: '"Pangolin"', fontSize: LB_FONT_SIZE })
+      .text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: LB_FONT_SIZE })
       .setDepth(100)
       .setOrigin(1, 0);
     this.lbText.setScrollFactor(0);
-
-    window.addEventListener('resize', () => {
-      setTimeout(() => {
-        this.lbText.x = scene.sys.game.canvas.width - MARGIN_LEFT;
-      }, 200);
-    });
+    this.add(this.lbText);
+    scene.add.existing(this);
   }
 
   updateLeaderboard(lb) {
