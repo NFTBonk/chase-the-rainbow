@@ -25,7 +25,6 @@ class Ui extends Phaser.Scene {
     this.createScore();
     this.createFuel();
     this.createControlInfo();
-    this.createNewFuelBar();
     this.createMinimap();
 
     this.fuelBarValue = 1; // value in range [0, 1]
@@ -65,10 +64,6 @@ class Ui extends Phaser.Scene {
     }
   }
 
-  createNewFuelBar() {
-    this.newFuelBar = new FuelBar(this, this.fuel.x + this.fuel.width * 0.5, this.fuel.y - 10).setScrollFactor(0);
-  }
-
   createScore() {
     let scoreGroup = this.add.container(0, 0);
     let scoreHeader = this.add.text(
@@ -100,13 +95,17 @@ class Ui extends Phaser.Scene {
 
   createFuel() {
     // const marginBottom = this.cameras.main.height - 45;
+    let fuelContainer = this.add.container(0,0);
     this.fuel = this.add
       .text(0, 0, FUEL_PREFIX, {
         fontFamily: 'Pangolin', fontSize: SCORE_FONT_SIZE
       })
       .setDepth(100);
     this.fuel.setScrollFactor(0);
-    this.scene.scene.plugins.get('rexanchorplugin').add(this.fuel, {
+    this.newFuelBar = new FuelBar(this, this.fuel.width * 0.5, this.fuel.y - 10).setScrollFactor(0);
+    fuelContainer.add(this.fuel);
+    fuelContainer.add(this.newFuelBar);
+    this.scene.scene.plugins.get('rexanchorplugin').add(fuelContainer, {
       left: 'left+'+MARGIN_LEFT,
       bottom: 'bottom-'+MARGIN_TOP
     });
