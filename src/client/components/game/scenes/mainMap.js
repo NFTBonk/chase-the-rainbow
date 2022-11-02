@@ -43,10 +43,9 @@ export default class MainMap extends Phaser.Scene {
     this.respawnButton.style.display = 'none';
     this.respawnButton.style.margin = '0px';
     this.respawnButton.style.padding = '0px';
-
+    document.getElementById("root").prepend(this.respawnButton);
+    console.log(document.getElementById("root"));
     this.respawnButton.src = '/deathScreen';
-
-    document.body.append(this.respawnButton);
 
     this.loggedIn = false;
   }
