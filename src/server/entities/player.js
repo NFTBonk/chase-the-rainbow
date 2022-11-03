@@ -57,7 +57,7 @@ module.exports = class Player extends SocketEntity {
       if (newY >= 0 && newY <= Constants.MAP_SIZE) {
         this.y = newY;
       }
-      this.angle = Angle.RotateTo(this.angle, this.inputAngle, 0.7);
+      this.angle = Angle.RotateTo(this.angle, this.inputAngle, 0.95);
 
       // handle boosting
       if (this.boosting && this.gas >= dt * 0.1) {

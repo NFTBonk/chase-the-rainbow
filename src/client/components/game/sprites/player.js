@@ -49,6 +49,11 @@ export default class Player extends Phaser.GameObjects.Container {
       });
       loader.start();
     }
+    
+    this.setVisible(false);
+    if(this.nameTag) this.nameTag.setAlpha(0);
+    if(this.trailMesh) this.trailMesh.setAlpha(0);
+    if(this.shipSprite) this.shipSprite.setAlpha(0);
   }
 
   destroy() {
@@ -62,12 +67,15 @@ export default class Player extends Phaser.GameObjects.Container {
    * Sets visibility, angle of travel, initial position, and hit box.
   */
   onSpawn(state) {
+    console.log("I am spawned");
     this.emit('spawn');
     this.setVisible(true);
     this.shipSprite.setAlpha(1);
     this.nameTag.setAlpha(1);
+    this.trailMesh.setAlpha(1);
     this.setAngle((state.angle / Math.PI) * 180);
     this.setPosition(state.x, state.y);
+    this.scene.cameras.main.startFollow(this);
   }
 
   onDeath() {
@@ -129,6 +137,12 @@ export default class Player extends Phaser.GameObjects.Container {
 
     // There are two frames to interp from!
     if (previousTimestampFrame && nextTimestampFrame) {
+      if(!this.isLocalPlayer && this.visible == false) {
+        this.setVisible(true);
+        this.nameTag.setAlpha(1);
+        this.trailMesh.setAlpha(1);
+        this.shipSprite.setAlpha(1);
+      }
       let interpFactor = (time - TIME_TRAVEL_MS - previousTimestampFrame.timestamp)
       / (nextTimestampFrame.timestamp - previousTimestampFrame.timestamp);
       // Just spawned in, don't interpolate anything.
@@ -200,9 +214,9 @@ export default class Player extends Phaser.GameObjects.Container {
       this.score = nextTimestampFrame.frame.score;
     }
 
-    if (this.isLocalPlayer) {
-      this.scene.cameras.main.centerOn(this.x, this.y);
-    }
+    // if (this.isLocalPlayer && this.visible == true) {
+    //   this.scene.cameras.main.centerOn(this.x, this.y);
+    // }
 
     this.trailMesh.clear();
     if (this.trailPoints.length > 0) {

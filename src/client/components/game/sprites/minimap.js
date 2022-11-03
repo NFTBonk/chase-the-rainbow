@@ -21,15 +21,19 @@ export default class Minimap extends Phaser.GameObjects.Graphics {
         this.clear();
         this.lineStyle(2.5, 0xffffff, 0.5);
         this.strokeRoundedRect(0,0, minimapSize, minimapSize, 10);
-        this.fillStyle(0xFFFFFF, 0.5);
-        this.fillCircle(minimapSize * (playerposition.x / 18000), minimapSize * (playerposition.y / 18000), 5);
-        this.lineStyle(1, 0xffffff, 0.3);
-        this.strokeCircle(minimapSize * (playerposition.x / 18000), minimapSize * (playerposition.y / 18000), minimapSize * visibilityRadius / 18000);
+        if(playerposition.visible) {
+            this.fillStyle(0xFFFFFF, 0.5);
+            this.fillCircle(minimapSize * (playerposition.x / 18000), minimapSize * (playerposition.y / 18000), 5);
+            this.lineStyle(1, 0xffffff, 0.3);
+            this.strokeCircle(minimapSize * (playerposition.x / 18000), minimapSize * (playerposition.y / 18000), minimapSize * visibilityRadius / 18000);
+        }
 
         
         this.fillStyle(0xFF0000, 0.5);
         playerposition.playerMap.forEach((value, key) => {
-            this.fillCircle(minimapSize * (value.x / 18000), minimapSize * (value.y / 18000), 5);
+            if(value.visible) {
+                this.fillCircle(minimapSize * (value.x / 18000), minimapSize * (value.y / 18000), 5);
+            }
         })
     }
 
