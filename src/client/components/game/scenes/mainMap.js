@@ -32,6 +32,8 @@ export default class MainMap extends Phaser.Scene {
       width: 1920,
       height: 1080,
       bots: 10,
+      planetScrollFactor : 0.5,
+      starScrollFactor : 0.3
     };
 
     // Dummy login button to test respawn state.
@@ -80,27 +82,35 @@ export default class MainMap extends Phaser.Scene {
       transports: ['websocket'],
     });
 
-    this.moon = this.add.image(8314, 16415, 'moon').setDepth(3.6);
-    this.bluePlanet = this.add.image(6289, 14146, 'doodliftsplanet').setDepth(3.6);
-    this.greenPlanet = this.add.image(12038, 9734, 'finnsplanet').setDepth(3.6);
-    this.cookiePlanet = this.add.image(4327, 8328, 'fundayplanet').setDepth(3.6);
-    this.bubblePlanet = this.add.image(10048, 7245, 'jkbplanet').setDepth(3.6);
-    this.narutoPlanet = this.add.image(11695, 17161, 'perfyplanet').setDepth(3.6);
-    this.sushiPlanet = this.add.image(8431, 1605, 'wizardplanet').setDepth(3.6);
-    this.carrotPlanet = this.add.image(6897, 3612, 'bananacandyplanet').setDepth(3.6);
-    this.carrotPlanet = this.add.image(2004, 6224, 'coffeeplanet').setDepth(3.6);
-    this.poopieplanet = this.add.image(7200, 16000, 'poopieplanet').setDepth(3.6);
-    this.raeplanet = this.add.image(800, 1600, 'raeplanet').setDepth(3.6);
+    this.moon = this.add.image(8314, 16415, 'moon').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.bluePlanet = this.add.image(6289, 14146, 'doodliftsplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.greenPlanet = this.add.image(12038, 9734, 'finnsplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.cookiePlanet = this.add.image(4327, 8328, 'fundayplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.bubblePlanet = this.add.image(10048, 7245, 'jkbplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.narutoPlanet = this.add.image(11695, 17161, 'perfyplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.sushiPlanet = this.add.image(8431, 1605, 'wizardplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.carrotPlanet = this.add.image(6897, 3612, 'bananacandyplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.carrotPlanet = this.add.image(2004, 6224, 'coffeeplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.poopieplanet = this.add.image(7200, 16000, 'poopieplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
+    this.raeplanet = this.add.image(800, 1600, 'raeplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
 
-    this.bg = this
-      .add.tileSprite(0, 0, this.config.width, this.config.height, this.config.tile)
-      .setOrigin(0)
-      .setDepth(3.5);
+    this.bg = this.add.graphics(0,0);
+    this.bg.fillStyle(0xA4A4F4, 1);
+    this.bg.fillRect(0, 0, this.config.width, this.config.height);
     this.bg.setScrollFactor(0);
+
+    this.stars = this.add.tileSprite(0, 0, this.config.width, this.config.height, "stars");
+    this.stars.setOrigin(0);
+    this.stars.setScrollFactor(0);
+
+    this.clouds = this.add.tileSprite(0, 0, this.config.width, this.config.height, "clouds");
+    this.clouds.setOrigin(0);
+    this.clouds.setScrollFactor(0);
+    this.clouds.setDepth(3.7);
 
     this.localPlayerSprite = this.add.player(0, 0, true, this.myNFT).setDepth(6);
 
-    // this.cameras.main.setScroll(9000, 9000);
+
 
     this.localPlayerSprite.on('spawn', () => {
       this.respawnButton.style.display = 'none';
@@ -281,11 +291,9 @@ export default class MainMap extends Phaser.Scene {
 
   update() {
     // background movement
-    this.bg.setTilePosition(this.cameras.main.scrollX, this.cameras.main.scrollY);
-    // if(this.localPlayerSprite.visible == true) {
-    //   this.bg.x = this.localPlayerSprite.x - (this.cameras.main.displayWidth / 2);
-    //   this.bg.y = this.localPlayerSprite.y - (this.cameras.main.displayHeight / 2);
-    // }
+    this.clouds.setTilePosition(this.cameras.main.scrollX, this.cameras.main.scrollY);
+    this.stars.setTilePosition(this.cameras.main.scrollX * this.config.starScrollFactor, this.cameras.main.scrollY * this.config.starScrollFactor);
+  
 
     const spacebar = this.spaceKeyPressed;
     if (this.cursors.space.isDown) {

@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import pixel from '../../../../../public/assets/images/16x16.png';
 import bg0Image from '../../../../../public/assets/images/bg/bg0.png';
+import clouds from '../../../../../public/assets/images/bg/clouds.png';
+import stars from '../../../../../public/assets/images/bg/stars.png';
 import moon from '../../../../../public/assets/images/bg/moon.png';
 import bubblePlanet from '../../../../../public/assets/images/bg/bubblePlanet.png';
 import bluePlanet from '../../../../../public/assets/images/bg/bluePlanet.png';
@@ -35,6 +37,8 @@ class Preload extends Phaser.Scene {
 
     // Map and UI
     this.load.image('bg0', bg0Image);
+    this.load.image('clouds', clouds);
+    this.load.image('stars', stars);
     this.load.image('pixel', pixel);
 
     // Object
