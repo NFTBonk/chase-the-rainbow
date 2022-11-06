@@ -29,8 +29,8 @@ export default class MainMap extends Phaser.Scene {
 
     this.config = {
       tile: 'bg0',
-      width: document.documentElement.clientWidth,
-      height: document.documentElement.clientHeight,
+      width: 1920,
+      height: 1080,
       bots: 10,
     };
 
@@ -43,10 +43,9 @@ export default class MainMap extends Phaser.Scene {
     this.respawnButton.style.display = 'none';
     this.respawnButton.style.margin = '0px';
     this.respawnButton.style.padding = '0px';
-
+    document.getElementById("root").prepend(this.respawnButton);
+    console.log(document.getElementById("root"));
     this.respawnButton.src = '/deathScreen';
-
-    document.body.append(this.respawnButton);
 
     this.loggedIn = false;
   }
@@ -97,10 +96,7 @@ export default class MainMap extends Phaser.Scene {
       .add.tileSprite(0, 0, this.config.width, this.config.height, this.config.tile)
       .setOrigin(0)
       .setDepth(3.5);
-
-    window.addEventListener('resize', () => {
-      this.bg.setSize(document.documentElement.clientWidth, document.documentElement.clientHeight);
-    });
+    this.bg.setScrollFactor(0);
 
     this.localPlayerSprite = this.add.player(0, 0, true, this.myNFT).setDepth(6);
 
@@ -286,10 +282,10 @@ export default class MainMap extends Phaser.Scene {
   update() {
     // background movement
     this.bg.setTilePosition(this.cameras.main.scrollX, this.cameras.main.scrollY);
-    if(this.localPlayerSprite.visible == true) {
-      this.bg.x = this.localPlayerSprite.x - (this.cameras.main.displayWidth / 2);
-      this.bg.y = this.localPlayerSprite.y - (this.cameras.main.displayHeight / 2);
-    }
+    // if(this.localPlayerSprite.visible == true) {
+    //   this.bg.x = this.localPlayerSprite.x - (this.cameras.main.displayWidth / 2);
+    //   this.bg.y = this.localPlayerSprite.y - (this.cameras.main.displayHeight / 2);
+    // }
 
     const spacebar = this.spaceKeyPressed;
     if (this.cursors.space.isDown) {

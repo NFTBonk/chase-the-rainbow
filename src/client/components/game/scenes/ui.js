@@ -5,7 +5,7 @@ import Minimap from '../sprites/minimap';
 import eventCenter from './eventCenter';
 
 const MARGIN_LEFT = 22;
-const MARGIN_TOP = 76;
+const MARGIN_TOP = 31;
 const SCORE_PREFIX = 'Score: ';
 const FUEL_PREFIX = 'Fuel';
 const SCORE_INIT = 0;
@@ -21,24 +21,39 @@ class Ui extends Phaser.Scene {
   }
 
   create() {
+    
+    this.cullFactorHeight = (this.scale.displaySize.height - this.scale.displaySize._parent.height ) / this.scale.displaySize.height;
+    this.cullFactorWidth = (this.scale.displaySize.width - this.scale.displaySize._parent.width ) / this.scale.displaySize.width;
     this.createAudio();
     this.createScore();
     this.createFuel();
     this.createControlInfo();
-    this.createNewFuelBar();
     this.createMinimap();
 
     this.fuelBarValue = 1; // value in range [0, 1]
     this.previousScore = 0;
     this.previousFuel = 1; // full tank
 
-    this.lb = new Leaderboard(this);
+    this.lb = new Leaderboard(this, this.scale.baseSize.width * (1 - this.cullFactorWidth / 2) - MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP);
 
     eventCenter.on('playerScore', this.updateScore, this); // listen for score updates
     eventCenter.on('playerFuel', this.updateFuelBar, this); // listen for fuel updates
     eventCenter.on('spacebar', this.onUseGas, this); // listen for fuel updates
     eventCenter.on('lb', this.lb.updateLeaderboard, this.lb); // listen for leaderboard updates
     eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
+
+    this.scale.on('resize', (gameSize, baseSize, displaySize, previousWidth, previousHeight) => {
+      let cullFactorHeight = (displaySize.height - displaySize._parent.height ) / displaySize.height;
+      let cullFactorWidth = (displaySize.width - displaySize._parent.width ) / displaySize.width;
+
+      this.minimap.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
+      this.minimapMask.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
+      this.scoreGroup.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
+      this.fuelContainer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP - 20);
+      this.fillMask.setPosition(this.fuelContainer.x + this.fuel.width * 0.5 - 15, this.fuelContainer.y + this.fuel.y - 200);
+      this.controlInfo.setPosition(MARGIN_LEFT + this.fuel.width + this.fuelContainer.x, this.fuelContainer.y);
+      this.lb.setPosition(baseSize.width * (1 - cullFactorWidth / 2) - MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
+    });
   }
 
   /** Adds callback to keypress on M and initializes audio as unmuted. */
@@ -65,40 +80,49 @@ class Ui extends Phaser.Scene {
     }
   }
 
-  createNewFuelBar() {
-    this.newFuelBar = new FuelBar(this, this.fuel.x + this.fuel.width * 0.5, this.fuel.y - 10).setScrollFactor(0);
-  }
-
   createScore() {
+    this.scoreGroup = this.add.container(this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP);
     let scoreHeader = this.add.text(
-      MARGIN_LEFT, MARGIN_TOP - 45, SCORE_PREFIX, 
+      0, 0, SCORE_PREFIX, 
       {
         fontFamily: 'Pangolin',
         fontSize: SCORE_FONT_SIZE
       }
     ).setDepth(100);
-
-    let scoreContainer = this.add.graphics({x: scoreHeader.x + scoreHeader.width, y: scoreHeader.y - scoreHeader.height * 0.5 + 5});
+    this.scoreGroup.add(scoreHeader);
+    let scoreContainer = this.add.graphics({x: scoreHeader.width, y: - scoreHeader.height * 0.5 + 5});
     scoreContainer.fillStyle(0xFFFFFF, 0.5);
     scoreContainer.fillRoundedRect(0, 0, 180, 55, 10);
     scoreContainer.fillStyle(0xFFFFFF, 1);
     scoreContainer.fillRoundedRect(10,10, 160, 35, 10);
+    this.scoreGroup.add(scoreContainer);
     this.score = this.add
-      .text(MARGIN_LEFT + scoreHeader.width + 160, MARGIN_TOP - 45, SCORE_INIT.toLocaleString(), {
+      .text(scoreHeader.width + 160, 0, SCORE_INIT.toLocaleString(), {
         fontFamily: 'Pangolin', fontSize: SCORE_FONT_SIZE, color: '#000000', align: 'right'
       })
       .setDepth(100).setOrigin(1, 0);
+    this.scoreGroup.add(this.score);
     this.score.setScrollFactor(0);
   }
 
   createFuel() {
-    const marginBottom = this.cameras.main.height - 45;
+    this.fuelContainer = this.add.container(this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (1 - this.cullFactorHeight / 2) - MARGIN_TOP- 20);
     this.fuel = this.add
-      .text(MARGIN_LEFT, marginBottom, FUEL_PREFIX, {
+      .text(0, 0, FUEL_PREFIX, {
         fontFamily: 'Pangolin', fontSize: SCORE_FONT_SIZE
       })
       .setDepth(100);
     this.fuel.setScrollFactor(0);
+    this.newFuelBar = new FuelBar(this, this.fuel.width * 0.5, this.fuel.y - 10).setScrollFactor(0);
+    this.fuelContainer.add(this.fuel);
+    this.fuelContainer.add(this.newFuelBar);
+
+    this.fillMask = this.make.graphics({x: this.fuelContainer.x + this.fuel.width * 0.5 - 15, y: this.fuelContainer.y + this.fuel.y - 200});
+    this.fillMask.fillStyle(0xFFFFFF, 1);
+
+    this.fillMask.fillRoundedRect(0, 0, 30, 180, 15);
+    let mask = this.fillMask.createGeometryMask();
+    this.newFuelBar.setFillMask(mask);
   }
 
   updateScore(currentScore) {
@@ -111,11 +135,10 @@ class Ui extends Phaser.Scene {
   }
 
   createControlInfo() {
-    const marginBottom = this.cameras.main.height - 45;
     this.controlInfo = this.add
       .text(
-        MARGIN_LEFT + this.fuel.width + this.fuel.x,
-        marginBottom,
+        MARGIN_LEFT + this.fuel.width + this.fuelContainer.x,
+        this.fuelContainer.y,
         CONTROL_INFO_PREFIX.concat(CONTROL_INFO_MUTE),
         {
           fontFamily: 'Pangolin', fontSize: SCORE_FONT_SIZE,
@@ -123,22 +146,19 @@ class Ui extends Phaser.Scene {
       )
       .setDepth(100);
     this.controlInfo.setScrollFactor(0);
-    // used to run when the resize has ended
-    function debounce(func) {
-      let timer;
-      return function (event) {
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(func, 100, event);
-      };
-    }
-    window.addEventListener('resize', debounce(() => {
-      const marginBottom1 = this.cameras.main.height - 45;
-      this.controlInfo.setY(marginBottom1);
-    }));
   }
 
   createMinimap() {
-    this.minimap = new Minimap(this, {x: this.cameras.main.width, y: this.cameras.main.height});
+    this.minimap = new Minimap(this, {x: this.scale.baseSize.width * (1 - this.cullFactorWidth / 2)  - 300, y: this.scale.baseSize.height * (1 - this.cullFactorHeight / 2) - 220});
+    // minimapContainer.add(this.minimap);
+
+    //MASK MINIMAP
+    this.minimapMask = this.make.graphics({x: this.scale.baseSize.width * (1 - this.cullFactorWidth / 2)  - 300, y: this.scale.baseSize.height * (1 - this.cullFactorHeight / 2) - 220});
+    this.minimapMask.fillStyle(0xFFFFFF, 1);
+    this.minimapMask.fillRect(0,0, 200, 200);
+    let mask = this.minimapMask.createGeometryMask();
+    this.minimap.setMask(mask);
+
   }
   /** Restricts fuel bar value to [0, 1]. */
   updateFuelBar(currentFuel) {

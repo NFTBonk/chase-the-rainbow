@@ -22,13 +22,6 @@ export default class FuelBar extends Phaser.GameObjects.Container {
         this.fuelFill.fillStyle(0xFFA4D4, 1);
         this.fuelFill.fillRect(10, 10, barWidth - 20, barHeight - 20);
 
-        let shapeMask = scene.make.graphics();
-        shapeMask.fillStyle(0xFFFFFF, 1);
-
-        shapeMask.fillRoundedRect(x - barWidth * 0.5 + 10, y - barHeight + 10, barWidth - 20, barHeight - 20, 15);
-        let mask = shapeMask.createGeometryMask();
-        this.fuelFill.setMask(mask);
-
         //OUTLINE BORDER
         fuelOutline.lineStyle(2.5, 0x000000, 1);
         fuelOutline.strokeRoundedRect(10, 10, barWidth - 20, barHeight - 20, 15);
@@ -63,6 +56,10 @@ export default class FuelBar extends Phaser.GameObjects.Container {
         this.fuelContainer.fillRoundedRect(0,0, barWidth, barHeight, 15);
         this.fuelContainer.fillStyle(0xFFFFFF, 1);
         this.fuelContainer.fillRoundedRect(10, 10, barWidth - 20, barHeight - 20, 15);
+    }
+
+    setFillMask(mask) {
+        this.fuelFill.setMask(mask);
     }
 
     // updatePlayerPositions(playerposition) {

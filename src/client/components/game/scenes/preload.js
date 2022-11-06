@@ -31,7 +31,7 @@ class Preload extends Phaser.Scene {
   }
 
   preload() {
-    this.add.text(20, 20, 'Loading...', {fontFamily: 'Pangolin'});
+    this.add.text(this.scale.baseSize.width * 0.5, this.scale.baseSize.height * 0.5, 'Loading...', {fontFamily: 'Pangolin', fontSize: 64}).setOrigin(0.5);  
 
     // Map and UI
     this.load.image('bg0', bg0Image);

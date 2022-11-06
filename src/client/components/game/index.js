@@ -8,12 +8,13 @@ export default class Game extends React.Component {
   componentDidMount() {
     const config = {
       type: Phaser.AUTO,
-      parent: 'phaserGame',
-      width: window.innerWidth,
-      height: window.innerHeight,
       scene: [Preload, MainMap, Ui],
       scale: {
-        mode: Phaser.Scale.RESIZE,
+        parent: 'phaser-game',
+        mode: Phaser.Scale.ENVELOP,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1920,
+        height: 1080,
       },
       physics: {
         default: 'arcade',
@@ -33,6 +34,6 @@ export default class Game extends React.Component {
   }
 
   render() {
-    return <div id="phaser-game" />;
+    return <div id="phaser-game" style={{overflow: "hidden", position: "relative"}}/>;
   }
 }
