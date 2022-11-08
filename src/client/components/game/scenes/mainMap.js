@@ -46,7 +46,6 @@ export default class MainMap extends Phaser.Scene {
     this.respawnButton.style.margin = '0px';
     this.respawnButton.style.padding = '0px';
     document.getElementById("root").prepend(this.respawnButton);
-    console.log(document.getElementById("root"));
     this.respawnButton.src = '/deathScreen';
 
     this.loggedIn = false;
@@ -71,6 +70,10 @@ export default class MainMap extends Phaser.Scene {
     }, false);
 
     this.magnet = {};
+  }
+
+  updateRotationThroughJoystick(rotation) {
+      this.socket.emit('angle', rotation);
   }
 
   create() {
@@ -110,7 +113,7 @@ export default class MainMap extends Phaser.Scene {
 
     this.localPlayerSprite = this.add.player(0, 0, true, this.myNFT).setDepth(6);
 
-
+    eventCenter.on('joystickmove', this.updateRotationThroughJoystick, this);
 
     this.localPlayerSprite.on('spawn', () => {
       this.respawnButton.style.display = 'none';
@@ -284,8 +287,9 @@ export default class MainMap extends Phaser.Scene {
       const d = this.input.mousePointer.y - centerY;
       const k = this.input.mousePointer.x - centerX;
       const rotation = Math.atan2(d, k);
+      // console.log(rotation);
 
-      this.socket.emit('angle', rotation);
+      // this.socket.emit('angle', rotation);
     }, 100);
   }
 

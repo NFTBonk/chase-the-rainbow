@@ -195,6 +195,11 @@ class Ui extends Phaser.Scene {
         thumb: this.add.circle(0, 0, 50, 0xFFFFFF),
       }
     )
+    this.joyStick.on('update', () => {
+      if(this.joyStick.force != 0)
+        eventCenter.emit("joystickmove", this.joyStick.rotation)
+    });
+    this.joyStick.on('pointerup', () => console.log(this.joyStick.rotation));
   }
 
   update(time, delta) {
