@@ -29,6 +29,7 @@ class Ui extends Phaser.Scene {
     this.createFuel();
     this.createControlInfo();
     this.createMinimap();
+    this.createJoystick();
 
     this.fuelBarValue = 1; // value in range [0, 1]
     this.previousScore = 0;
@@ -180,6 +181,20 @@ class Ui extends Phaser.Scene {
     if(!isSpaceDown) {
       this.newFuelBar.resetFuelContainer();
     }
+  }
+
+  createJoystick() {
+    console.log(this);
+    this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(
+      this,  
+      {
+        x: this.scale.baseSize.width * this.cullFactorWidth / 2 + 300,
+        y: this.scale.baseSize.height * (1 - this.cullFactorHeight / 2) - MARGIN_TOP -  300,
+        radius: 125,
+        base: this.add.circle(0, 0, 125, 0xFFFFFF, 0.25),
+        thumb: this.add.circle(0, 0, 50, 0xFFFFFF),
+      }
+    )
   }
 
   update(time, delta) {
