@@ -24,7 +24,7 @@ export default class MainMap extends Phaser.Scene {
     this.server = window.sessionStorage.getItem('server');
     this.tourneyCode = window.sessionStorage.getItem('tourneyCode');
     this.walletaddy = window.sessionStorage.getItem('user');
-
+    
     if (!this.username || !this.myNFT) window.location.replace(this.prodMode ? 'https://www.chasetherainbow.app' : 'http://localhost:3000');
 
     this.config = {
@@ -278,12 +278,11 @@ export default class MainMap extends Phaser.Scene {
     this.graphics = this.add.graphics().setDepth(4);
     const THICKNESS = 12000;
     this.graphics.lineStyle(THICKNESS, 0xc6c6ff, 1);
-
-    this.graphics.strokeRoundedRect(0 - (THICKNESS / 2), 0 - (THICKNESS / 2), 18000 + THICKNESS, 18000 + THICKNESS, 0);
+    this.graphics.strokeRect(0 - (THICKNESS / 2), 0 - (THICKNESS / 2), 18000 + THICKNESS, 18000 + THICKNESS);
 
     this.graphics.lineStyle(4, 0xffffff, 0.7);
 
-    this.graphics.strokeRoundedRect(0, 0, 18000, 18000, 0);
+    this.graphics.strokeRect(0, 0, 18000, 18000);
 
     // Send frequent input updates.
     setInterval(() => {
@@ -296,7 +295,9 @@ export default class MainMap extends Phaser.Scene {
       const rotation = Math.atan2(d, k);
       // console.log(rotation);
 
-      // this.socket.emit('angle', rotation);
+      if(!this.sys.game.device.os.android && !this.sys.game.device.os.iOS) {
+        this.socket.emit('angle', rotation);
+      }
     }, 100);
   }
 

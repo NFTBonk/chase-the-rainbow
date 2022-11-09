@@ -28,8 +28,10 @@ class Ui extends Phaser.Scene {
     this.createFuel();
     this.createControlInfo();
     this.createMinimap();
-    this.createJoystick();
-    this.createBoostButton();
+    if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
+      this.createJoystick();
+      this.createBoostButton();
+    }
 
     this.fuelBarValue = 1; // value in range [0, 1]
     this.previousScore = 0;
@@ -147,6 +149,7 @@ class Ui extends Phaser.Scene {
         },
       )
       .setDepth(100);
+    this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
     this.controlInfo.setScrollFactor(0);
   }
 
