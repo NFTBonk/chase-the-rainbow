@@ -74,7 +74,6 @@ class Preload extends Phaser.Scene {
     //Load virtual joystick
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
 
-    window.scrollTo(0, 0);
   }
 
   create() {

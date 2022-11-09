@@ -6,6 +6,7 @@ import MainMap from './scenes/mainMap';
 
 export default class Game extends React.Component {
   componentDidMount() {
+    window.scrollTo(0, 0);
     const config = {
       type: Phaser.AUTO,
       scene: [Preload, MainMap, Ui],
