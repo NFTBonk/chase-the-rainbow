@@ -16,6 +16,9 @@ export default class Game extends React.Component {
         width: 1920,
         height: 1080,
       },
+      input: {
+        activePointers: 3,
+      },
       physics: {
         default: 'arcade',
         arcade: {
