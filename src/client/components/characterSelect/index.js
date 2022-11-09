@@ -80,7 +80,7 @@ function CharacterSelect() {
   return (
     <ScreenWrapper>
       <ArrowBack onClick={() => navigate('/')} />
-      <Header walletAddress={sessionStorage.getItem('user')} />
+      {/* <Header walletAddress={sessionStorage.getItem('user')} /> */}
       <MainWrapper>
         <CharacterList
           nfts={JSON.parse(sessionStorage.getItem('nfts'))}

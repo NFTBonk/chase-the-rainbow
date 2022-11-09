@@ -76,6 +76,11 @@ export default class MainMap extends Phaser.Scene {
       this.socket.emit('angle', rotation);
   }
 
+  handleBoostButton(isBoostDown) {
+    console.log(isBoostDown);
+    this.isBoostButtonPressed = isBoostDown;
+  }
+
   create() {
     this.login();
     const url = this.server === 'us1' ? 'https://www.chasetherainbow.app' : `https://space-doodles-${this.server}.herokuapp.com`;
@@ -114,6 +119,7 @@ export default class MainMap extends Phaser.Scene {
     this.localPlayerSprite = this.add.player(0, 0, true, this.myNFT).setDepth(6);
 
     eventCenter.on('joystickmove', this.updateRotationThroughJoystick, this);
+    eventCenter.on('boostButton', this.handleBoostButton, this);
 
     this.localPlayerSprite.on('spawn', () => {
       this.respawnButton.style.display = 'none';
@@ -172,6 +178,7 @@ export default class MainMap extends Phaser.Scene {
     // Create key listener and check if player is boosting
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKeyPressed = false;
+    this.isBoostButtonPressed = false;
 
     // Used to manage player/rainbow bit/fuel tank creation, deletion, and update.
     const playerIds = new Set();
@@ -300,7 +307,7 @@ export default class MainMap extends Phaser.Scene {
   
 
     const spacebar = this.spaceKeyPressed;
-    if (this.cursors.space.isDown) {
+    if (this.cursors.space.isDown || this.isBoostButtonPressed) {
       this.spaceKeyPressed = true;
     } else {
       this.spaceKeyPressed = false;
