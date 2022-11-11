@@ -24,7 +24,7 @@ export default class MainMap extends Phaser.Scene {
     this.server = window.sessionStorage.getItem('server');
     this.tourneyCode = window.sessionStorage.getItem('tourneyCode');
     this.walletaddy = window.sessionStorage.getItem('user');
-
+    
     if (!this.username || !this.myNFT) window.location.replace(this.prodMode ? 'https://www.chasetherainbow.app' : 'http://localhost:3000');
 
     this.config = {
@@ -46,7 +46,6 @@ export default class MainMap extends Phaser.Scene {
     this.respawnButton.style.margin = '0px';
     this.respawnButton.style.padding = '0px';
     document.getElementById("root").prepend(this.respawnButton);
-    console.log(document.getElementById("root"));
     this.respawnButton.src = '/deathScreen';
 
     this.loggedIn = false;
@@ -71,6 +70,15 @@ export default class MainMap extends Phaser.Scene {
     }, false);
 
     this.magnet = {};
+  }
+
+  updateRotationThroughJoystick(rotation) {
+      this.socket.emit('angle', rotation);
+  }
+
+  handleBoostButton(isBoostDown) {
+    console.log(isBoostDown);
+    this.isBoostButtonPressed = isBoostDown;
   }
 
   create() {
@@ -110,7 +118,8 @@ export default class MainMap extends Phaser.Scene {
 
     this.localPlayerSprite = this.add.player(0, 0, true, this.myNFT).setDepth(6);
 
-
+    eventCenter.on('joystickmove', this.updateRotationThroughJoystick, this);
+    eventCenter.on('boostButton', this.handleBoostButton, this);
 
     this.localPlayerSprite.on('spawn', () => {
       this.respawnButton.style.display = 'none';
@@ -169,6 +178,7 @@ export default class MainMap extends Phaser.Scene {
     // Create key listener and check if player is boosting
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKeyPressed = false;
+    this.isBoostButtonPressed = false;
 
     // Used to manage player/rainbow bit/fuel tank creation, deletion, and update.
     const playerIds = new Set();
@@ -268,12 +278,11 @@ export default class MainMap extends Phaser.Scene {
     this.graphics = this.add.graphics().setDepth(4);
     const THICKNESS = 12000;
     this.graphics.lineStyle(THICKNESS, 0xc6c6ff, 1);
-
-    this.graphics.strokeRoundedRect(0 - (THICKNESS / 2), 0 - (THICKNESS / 2), 18000 + THICKNESS, 18000 + THICKNESS, 0);
+    this.graphics.strokeRect(0 - (THICKNESS / 2), 0 - (THICKNESS / 2), 18000 + THICKNESS, 18000 + THICKNESS);
 
     this.graphics.lineStyle(4, 0xffffff, 0.7);
 
-    this.graphics.strokeRoundedRect(0, 0, 18000, 18000, 0);
+    this.graphics.strokeRect(0, 0, 18000, 18000);
 
     // Send frequent input updates.
     setInterval(() => {
@@ -284,8 +293,11 @@ export default class MainMap extends Phaser.Scene {
       const d = this.input.mousePointer.y - centerY;
       const k = this.input.mousePointer.x - centerX;
       const rotation = Math.atan2(d, k);
+      // console.log(rotation);
 
-      this.socket.emit('angle', rotation);
+      if(!this.sys.game.device.os.android && !this.sys.game.device.os.iOS) {
+        this.socket.emit('angle', rotation);
+      }
     }, 100);
   }
 
@@ -296,7 +308,7 @@ export default class MainMap extends Phaser.Scene {
   
 
     const spacebar = this.spaceKeyPressed;
-    if (this.cursors.space.isDown) {
+    if (this.cursors.space.isDown || this.isBoostButtonPressed) {
       this.spaceKeyPressed = true;
     } else {
       this.spaceKeyPressed = false;

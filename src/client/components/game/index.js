@@ -3,18 +3,23 @@ import React from 'react';
 import Preload from './scenes/preload';
 import Ui from './scenes/ui';
 import MainMap from './scenes/mainMap';
+import Rotate from './scenes/rotate';
 
 export default class Game extends React.Component {
   componentDidMount() {
+    window.scrollTo(0, 0);
     const config = {
       type: Phaser.AUTO,
-      scene: [Preload, MainMap, Ui],
+      scene: [Preload, MainMap, Ui, Rotate],
       scale: {
         parent: 'phaser-game',
         mode: Phaser.Scale.ENVELOP,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         width: 1920,
         height: 1080,
+      },
+      input: {
+        activePointers: 3,
       },
       physics: {
         default: 'arcade',

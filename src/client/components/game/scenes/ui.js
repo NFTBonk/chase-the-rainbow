@@ -21,7 +21,8 @@ class Ui extends Phaser.Scene {
   }
 
   create() {
-    
+    if(this.scale.displaySize._parent.height > this.scale.displaySize._parent.width) 
+      this.scene.launch("rotate");
     this.cullFactorHeight = (this.scale.displaySize.height - this.scale.displaySize._parent.height ) / this.scale.displaySize.height;
     this.cullFactorWidth = (this.scale.displaySize.width - this.scale.displaySize._parent.width ) / this.scale.displaySize.width;
     this.createAudio();
@@ -29,6 +30,10 @@ class Ui extends Phaser.Scene {
     this.createFuel();
     this.createControlInfo();
     this.createMinimap();
+    if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
+      this.createJoystick();
+      this.createBoostButton();
+    }
 
     this.fuelBarValue = 1; // value in range [0, 1]
     this.previousScore = 0;
@@ -53,6 +58,12 @@ class Ui extends Phaser.Scene {
       this.fillMask.setPosition(this.fuelContainer.x + this.fuel.width * 0.5 - 15, this.fuelContainer.y + this.fuel.y - 200);
       this.controlInfo.setPosition(MARGIN_LEFT + this.fuel.width + this.fuelContainer.x, this.fuelContainer.y);
       this.lb.setPosition(baseSize.width * (1 - cullFactorWidth / 2) - MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
+      this.joyStick.setPosition(baseSize.width * cullFactorWidth / 2 + 275, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP -  200,)
+      if(displaySize._parent.height > displaySize._parent.width) {
+        this.scene.launch("rotate");
+      } else {
+        this.scene.stop("rotate");
+      }
     });
   }
 
@@ -145,6 +156,7 @@ class Ui extends Phaser.Scene {
         },
       )
       .setDepth(100);
+    this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
     this.controlInfo.setScrollFactor(0);
   }
 
@@ -180,6 +192,33 @@ class Ui extends Phaser.Scene {
     if(!isSpaceDown) {
       this.newFuelBar.resetFuelContainer();
     }
+  }
+
+  createJoystick() {
+    this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(
+      this,  
+      {
+        x: this.scale.baseSize.width * this.cullFactorWidth / 2 + 275,
+        y: this.scale.baseSize.height * (1 - this.cullFactorHeight / 2) - MARGIN_TOP -  200,
+        radius: 125,
+        base: this.add.circle(0, 0, 125, 0xFFFFFF, 0.25),
+        thumb: this.add.circle(0, 0, 50, 0xFFFFFF),
+      }
+    )
+    this.joyStick.on('update', () => {
+      if(this.joyStick.force != 0)
+        eventCenter.emit("joystickmove", this.joyStick.rotation)
+    });
+  }
+
+  createBoostButton() {
+    this.boostButton = this.add.graphics();
+    this.boostButton.setInteractive(new Phaser.Geom.Rectangle(this.scale.baseSize.width * 0.5, 0, this.scale.baseSize.width * 0.5, this.scale.baseSize.height), Phaser.Geom.Rectangle.Contains);
+    this.boostButton.on('pointerdown', () => {
+      console.log("BOOST!");
+      eventCenter.emit("boostButton", true)
+    });
+    this.boostButton.on('pointerup', () => eventCenter.emit("boostButton", false));
   }
 
   update(time, delta) {

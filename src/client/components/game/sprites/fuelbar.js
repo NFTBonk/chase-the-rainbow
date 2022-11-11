@@ -24,10 +24,11 @@ export default class FuelBar extends Phaser.GameObjects.Container {
 
         //OUTLINE BORDER
         fuelOutline.lineStyle(2.5, 0x000000, 1);
-        fuelOutline.strokeRoundedRect(10, 10, barWidth - 20, barHeight - 20, 15);
+        if(!this.scene.sys.game.device.os.android && !this.sys.game.device.os.iOS) 
+            fuelOutline.strokeRoundedRect(10, 10, barWidth - 20, barHeight - 20, 15);
         this.add(this.fuelContainer);
         this.add(this.fuelFill);
-        this.add(fuelOutline);
+            this.add(fuelOutline);
         scene.add.existing(this);
 
         //USED FOR SMOOTHLY ANIMATING INDICATOR TO DESIRED VALUE

@@ -70,6 +70,10 @@ class Preload extends Phaser.Scene {
     // Audio
     this.load.audio('rainbowPickup', rainbowPickupAudio);
     this.load.audio('fuelPickup', fuelPickupAudio);
+
+    //Load virtual joystick
+    this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
+
   }
 
   create() {
