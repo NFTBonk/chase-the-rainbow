@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import pixel from '../../../../../public/assets/images/16x16.png';
+import rotate from '../../../../../public/assets/images/rotate.png';
 import bg0Image from '../../../../../public/assets/images/bg/bg0.png';
 import clouds from '../../../../../public/assets/images/bg/clouds.png';
 import stars from '../../../../../public/assets/images/bg/stars.png';
@@ -59,6 +60,7 @@ class Preload extends Phaser.Scene {
     this.load.image('clouds', clouds);
     this.load.image('stars', stars);
     this.load.image('pixel', pixel);
+    this.load.image('rotate', rotate);
 
     // Object
     this.load.image('rainbowBit', rainbowBitImage);
