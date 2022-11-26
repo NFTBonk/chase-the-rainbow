@@ -220,7 +220,6 @@ setInterval(() => {
 
     let endTime = new Date(startTime);
     endTime.setMinutes(startTime.getMinutes() + Constants.TOURNAMENT_DURATION);
-
   }
 
 
@@ -303,6 +302,7 @@ setInterval(() => {
       localPlayer: player.getLocalPlayerNetworkModel(),
       players: playersInRadiusNetworkModel,
       entities: entitiesInRadiusNetworkModel,
+      timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime) / 1000 : 0,
     };
 
     if (player.ai) {
