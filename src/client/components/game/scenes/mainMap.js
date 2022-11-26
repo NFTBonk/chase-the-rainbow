@@ -11,6 +11,7 @@ import DeathScreen from '../../deathScreen/index';
 //Private Reference for PlayerMap
 const _playerMap = Symbol("PlayerMap");
 const _serverType = Symbol("ServerType");
+const _timeLeft = Symbol("timeLeft");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -196,6 +197,7 @@ export default class MainMap extends Phaser.Scene {
 
     this.socket.on('frame', (frame) => {
       this.localPlayerSprite.pushFrame(frame.localPlayer);
+      this[_timeLeft] = frame.timeLeft;
 
       const newPlayerIds = new Set();
       const newEntityIds = new Set();
@@ -323,6 +325,9 @@ export default class MainMap extends Phaser.Scene {
     }
     
     eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap]});
+    if(this[_serverType] == 'TOURNAMENT') {
+      eventCenter.emit("countdown", this[_timeLeft]);
+    }
     
     if (spacebar !== this.spaceKeyPressed) {
       eventCenter.emit('spacebar', this.spaceKeyPressed);
