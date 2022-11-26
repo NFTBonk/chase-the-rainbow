@@ -26,6 +26,8 @@ require('isomorphic-fetch');
 const app = express();
 const httpServer = createServer(app);
 
+const serverType = Constants.SERVER_TYPE.TOURNAMENT;
+
 // CHANGE THIS LATER TO ONLY TRUSTED DOMAINS!!!!
 const io = new Server(httpServer, { cors: { origin: '*' } });
 
@@ -111,9 +113,21 @@ httpServer.listen(process.env.PORT || 3000, async () => {
 
 io.on('connection', (socket) => {
   console.log(`user connected: ${socket.id}`);
+  
 
   const player = new Player(socket.id, socket);
   players.add(player);
+
+  
+  const currentTime = new Date();
+  let mins = currentTime.getMinutes();
+  if(serverType = Constants.SERVER_TYPE.TOURNAMENT && Constants.TOURNAMENT_COOLDOWN > 0 && mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION) {
+    //REJECT USER IF SERVER IS ON COOLDOWN
+    player.send('setup', {serverType: serverType, isActive: false});
+    return;
+  } else {
+    player.send('setup', {serverType: serverType, isActive: true});
+  }
 
   socket.on('angle', (angle) => {
     player.inputAngle = angle;
@@ -140,6 +154,7 @@ io.on('connection', (socket) => {
             player.spawn(auth.nft);
             player.setTourneyCode(auth.tourneyCode);
             player.setWallet(auth.walletaddy);
+            player.setTournament(serverType == Constants.SERVER_TYPE.TOURNAMENT ? 1 : 0);
           } else {
             console.log('recaptcha failed', json['error-codes']);
           // add some way to notify player the recaptcha failed
@@ -175,11 +190,28 @@ const TICK_INTERVAL = 200;
 // Main game loop / tick.
 let frameId = 0;
 let lastTime = new Date().getTime();
+let onCooldown = false;
 setInterval(() => {
   // Log delta interval.
-  const currentTime = new Date().getTime();
+  const currentTime = new Date();
+  let mins = currentTime.getMinutes();
+  if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION && !forReset) {
+    //GET WINNER
+    players.sort((a, b) =>b.score - a.score);
+    players[0].setWinner();
+    players.forEach((player) => {
+      player.die();
+    });
+    onCooldown = true;
+    players = new PlayerSet();
+    entities = new EntitySet();
+    //UPLOAD HIGHEST SCORE TO LEADERBOARD
+    return;
+  } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) <= Constants.TOURNAMENT_DURATION && forReset) {
+    onCooldown = false;
+  }
   // console.log(currentTime - lastTime);
-  lastTime = currentTime;
+  lastTime = currentTime.getTime();
   // Run entity updates.
   players.forEach((player) => {
     player.update(new Date().getTime(), TICK_INTERVAL);

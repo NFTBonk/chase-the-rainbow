@@ -10,6 +10,7 @@ import DeathScreen from '../../deathScreen/index';
 
 //Private Reference for PlayerMap
 const _playerMap = Symbol("PlayerMap");
+const _serverType = Symbol("ServerType");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -166,6 +167,13 @@ export default class MainMap extends Phaser.Scene {
     this.socket.on('connect', () => {
       console.log('connected!!');
     });
+
+    this.socket.on('setup', (data) => {
+      this[_serverType] = data.serverType;
+      if(!data.isActive) {
+        //SHOW POPUP
+      }
+    })
 
     this.socket.on('loggedIn', () => {
       this.loggedIn = true;

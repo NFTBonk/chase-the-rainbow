@@ -33,6 +33,8 @@ module.exports = class Player extends SocketEntity {
     this.speed = 0.5;
     this.tourneyCode = '';
     this.walletaddy = '';
+    this.isTournament = 0;
+    this.isWinner = false;
 
     // Player inputs to process, updated as the player sends new packets.
     this.inputAngle = 0;
@@ -100,6 +102,14 @@ module.exports = class Player extends SocketEntity {
     this.tourneyCode = tourneyCode;
   }
 
+  setTournament(isTournament) {
+    this.isTournament = isTournament;
+  }
+
+  setWinner() {
+    this.isWinner = true;
+  }
+
   setWallet(walletAddress) {
     this.walletaddy = walletAddress;
   }
@@ -130,7 +140,7 @@ module.exports = class Player extends SocketEntity {
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;
     }
-    if (!this.ai) {
+    if (!this.ai && (this.isTournament == 0 || this.isWinner)) {
       const today = new Date();
 
       axios.post('http://localhost:3000/leaderBoard', {
@@ -141,6 +151,7 @@ module.exports = class Player extends SocketEntity {
         walletaddy: this.walletaddy,
         timestamp: `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`,
         timestamp2: Date.now(),
+        isTournament: this.isTournament
       })
         .then((response) => {
           console.log(response.data);
