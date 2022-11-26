@@ -18,6 +18,7 @@ const RainbowBit = require('./entities/rainbowBit');
 
 const EntitySet = require('./sets/entitySet');
 const PlayerSet = require('./sets/playerSet');
+const { TOURNAMENT_COOLDOWN } = require('../shared/constants');
 
 require('dotenv').config();
 require('isomorphic-fetch');
@@ -121,7 +122,7 @@ io.on('connection', (socket) => {
   
   const currentTime = new Date();
   let mins = currentTime.getMinutes();
-  if(serverType = Constants.SERVER_TYPE.TOURNAMENT && Constants.TOURNAMENT_COOLDOWN > 0 && mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION) {
+  if(serverType == Constants.SERVER_TYPE.TOURNAMENT && Constants.TOURNAMENT_COOLDOWN > 0 && mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION) {
     //REJECT USER IF SERVER IS ON COOLDOWN
     player.send('setup', {serverType: serverType, isActive: false});
     return;
@@ -194,22 +195,35 @@ let onCooldown = false;
 setInterval(() => {
   // Log delta interval.
   const currentTime = new Date();
-  let mins = currentTime.getMinutes();
-  if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION && !forReset) {
-    //GET WINNER
-    players.sort((a, b) =>b.score - a.score);
-    players[0].setWinner();
-    players.forEach((player) => {
-      player.die();
-    });
-    onCooldown = true;
-    players = new PlayerSet();
-    entities = new EntitySet();
-    //UPLOAD HIGHEST SCORE TO LEADERBOARD
-    return;
-  } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) <= Constants.TOURNAMENT_DURATION && forReset) {
-    onCooldown = false;
+  if(serverType == Constants.SERVER_TYPE.TOURNAMENT) {
+    let mins = currentTime.getMinutes();
+    if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION && !forReset) {
+      //GET WINNER
+      players.sort((a, b) =>b.score - a.score);
+      players[0].setWinner();
+      players.forEach((player) => {
+        player.die();
+      });
+      onCooldown = true;
+      players = new PlayerSet();
+      entities = new EntitySet();
+      //UPLOAD HIGHEST SCORE TO LEADERBOARD
+      return;
+    } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) <= Constants.TOURNAMENT_DURATION && forReset) {
+      onCooldown = false;
+    }
+    //IDENTIFY START TIME
+    let startTime = new Date(currentTime);
+    startTime.setMinutes(Math.floor(mins / (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN)) * (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN))
+    startTime.setSeconds(0);
+    startTime.setMilliseconds(0);
+
+    let endTime = new Date(startTime);
+    endTime.setMinutes(startTime.getMinutes() + Constants.TOURNAMENT_DURATION);
+
   }
+
+
   // console.log(currentTime - lastTime);
   lastTime = currentTime.getTime();
   // Run entity updates.
