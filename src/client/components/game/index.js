@@ -4,13 +4,14 @@ import Preload from './scenes/preload';
 import Ui from './scenes/ui';
 import MainMap from './scenes/mainMap';
 import Rotate from './scenes/rotate';
+import Prepreload from './scenes/prepreload';
 
 export default class Game extends React.Component {
   componentDidMount() {
     window.scrollTo(0, 0);
     const config = {
       type: Phaser.AUTO,
-      scene: [Preload, MainMap, Ui, Rotate],
+      scene: [Prepreload, Preload, MainMap, Ui, Rotate],
       scale: {
         parent: 'phaser-game',
         mode: Phaser.Scale.ENVELOP,
