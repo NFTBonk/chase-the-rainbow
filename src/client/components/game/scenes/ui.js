@@ -121,7 +121,7 @@ class Ui extends Phaser.Scene {
 
   createTimer() {
     this.timer = this.add.text(
-      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "", 
+      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "WOOP", 
       {
         fontFamily: 'Pangolin',
         fontSize: SCORE_FONT_SIZE
@@ -158,9 +158,14 @@ class Ui extends Phaser.Scene {
     this.previousScore = currentScore;
   }
 
-  updateTimer(timeLeft) { 
-    this.timer.setText(Math.floor(timeLeft / 60) + ":" + timeLeft % 60);
+  pad2Digits(num) {
+    return String(num).padStart(2, '0');
   }
+
+  updateTimer(timeLeft) { 
+    this.timer.setText(this.pad2Digits(Math.floor(timeLeft / 60)) + ":" + this.pad2Digits(Math.floor(timeLeft % 60)));
+  }
+
   createControlInfo() {
     this.controlInfo = this.add
       .text(

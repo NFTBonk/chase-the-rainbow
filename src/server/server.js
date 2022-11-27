@@ -125,7 +125,18 @@ io.on('connection', (socket) => {
   let mins = currentTime.getMinutes();
   if(serverType == Constants.SERVER_TYPE.TOURNAMENT && Constants.TOURNAMENT_COOLDOWN > 0 && mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION) {
     //REJECT USER IF SERVER IS ON COOLDOWN
-    player.send('setup', {serverType: serverType, isActive: false});
+
+    startTime = new Date(currentTime);
+    startTime.setMinutes(Math.floor(mins / (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN)) * (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN))
+    startTime.setSeconds(0);
+    startTime.setMilliseconds(0);
+
+    endTime = new Date(startTime);
+    endTime.setMinutes(startTime.getMinutes() + Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN);
+    player.send('setup', {serverType: serverType, isActive: false, next: endTime.toLocaleTimeString('default', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })});
     return;
   } else {
     player.send('setup', {serverType: serverType, isActive: true});
@@ -309,7 +320,7 @@ setInterval(() => {
       localPlayer: player.getLocalPlayerNetworkModel(),
       players: playersInRadiusNetworkModel,
       entities: entitiesInRadiusNetworkModel,
-      timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime) / 1000 : 0,
+      timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
     };
 
     if (player.ai) {
