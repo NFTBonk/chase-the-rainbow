@@ -19,6 +19,7 @@ const RainbowBit = require('./entities/rainbowBit');
 const EntitySet = require('./sets/entitySet');
 const PlayerSet = require('./sets/playerSet');
 const { TOURNAMENT_COOLDOWN } = require('../shared/constants');
+const { WineBarRounded } = require('@mui/icons-material');
 
 require('dotenv').config();
 require('isomorphic-fetch');
@@ -99,8 +100,8 @@ app.get('/leaderBoard', async (request, response, next) => {
 
 // TODO: Combine both players and entities list.
 // TODO: Restructure entities to have hierarchy, and single World .
-const players = new PlayerSet();
-const entities = new EntitySet();
+let players = new PlayerSet();
+let entities = new EntitySet();
 
 httpServer.listen(process.env.PORT || 3000, async () => {
   try {
@@ -192,16 +193,21 @@ const TICK_INTERVAL = 200;
 let frameId = 0;
 let lastTime = new Date().getTime();
 let onCooldown = false;
+let startTime = new Date();
+let endTime = new Date();
 setInterval(() => {
   // Log delta interval.
   const currentTime = new Date();
   if(serverType == Constants.SERVER_TYPE.TOURNAMENT) {
     let mins = currentTime.getMinutes();
-    if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION && !forReset) {
+    if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION && !onCooldown) {
+      console.log("infinite loop");
       //GET WINNER
-      players.sort((a, b) =>b.score - a.score);
-      players[0].setWinner();
+      let winner = [...players].sort((a, b) =>b.score - a.score)[0];
       players.forEach((player) => {
+        if(player.id == winner.id) {
+          player.setWinner();
+        }
         player.die();
       });
       onCooldown = true;
@@ -209,16 +215,17 @@ setInterval(() => {
       entities = new EntitySet();
       //UPLOAD HIGHEST SCORE TO LEADERBOARD
       return;
-    } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) <= Constants.TOURNAMENT_DURATION && forReset) {
+    } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) <= Constants.TOURNAMENT_DURATION && onCooldown) {
+      console.log("infinite loop cooldown");
       onCooldown = false;
     }
     //IDENTIFY START TIME
-    let startTime = new Date(currentTime);
+    startTime = new Date(currentTime);
     startTime.setMinutes(Math.floor(mins / (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN)) * (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN))
     startTime.setSeconds(0);
     startTime.setMilliseconds(0);
 
-    let endTime = new Date(startTime);
+    endTime = new Date(startTime);
     endTime.setMinutes(startTime.getMinutes() + Constants.TOURNAMENT_DURATION);
   }
 

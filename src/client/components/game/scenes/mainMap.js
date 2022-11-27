@@ -128,6 +128,7 @@ export default class MainMap extends Phaser.Scene {
     });
 
     this.localPlayerSprite.on('death', () => {
+      //TODO UPDATE TEXT DEPENDING ON TOURNAMENT TYPE
       this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Score: ${this.localPlayerSprite.score}`;
       this.respawnButton.contentWindow.document.getElementById('again').onclick = () => {
         this.socket.emit('forcedDisconnect');
@@ -172,7 +173,19 @@ export default class MainMap extends Phaser.Scene {
     this.socket.on('setup', (data) => {
       this[_serverType] = data.serverType;
       if(!data.isActive) {
-        //SHOW POPUP
+        this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `No Active Tournaments`;
+        document.body.style.overflow = 'hidden';
+        this.respawnButton.style.display = 'block';
+        this.respawnButton.contentWindow.document.getElementById('again').onclick = () => {
+          this.socket.emit('forcedDisconnect');
+          window.location.replace(this.prodMode ? 'https://www.chasetherainbow.app/pilots' : 'http://localhost:3000/pilots');
+          clearTimeout(this.AFKKick);
+        };
+        this.respawnButton.contentWindow.document.getElementById('titleMenu').onclick = () => {
+          this.socket.emit('forcedDisconnect');
+          window.location.replace(this.prodMode ? 'https://www.chasetherainbow.app' : 'http://localhost:3000');
+          clearTimeout(this.AFKKick);
+        };
       }
     })
 
