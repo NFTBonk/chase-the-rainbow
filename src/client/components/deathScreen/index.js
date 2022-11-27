@@ -101,7 +101,7 @@ const ShareText = styled.span`
 export default function DeathScreen() {
   return (
     <Wrapper>
-      <DeathTitle>Game Over!</DeathTitle>
+      <DeathTitle id="title">Game Over!</DeathTitle>
       <Stats id="score">Score: </Stats>
       <img src={Death} alt="dead" />
       <PrimaryButton id="again">Play Again</PrimaryButton>

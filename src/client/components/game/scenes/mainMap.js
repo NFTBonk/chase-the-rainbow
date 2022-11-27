@@ -173,7 +173,9 @@ export default class MainMap extends Phaser.Scene {
     this.socket.on('setup', (data) => {
       this[_serverType] = data.serverType;
       if(!data.isActive) {
-        this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `No Active Tournaments`;
+        this.respawnButton.contentWindow.document.getElementById('title').innerHTML = `TOURNAMENT CLOSED`;
+        this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Next Tournament Starts at `;
+        this.respawnButton.contentWindow.document.getElementById('again').innerHTML = `Change Server`;
         document.body.style.overflow = 'hidden';
         this.respawnButton.style.display = 'block';
         this.respawnButton.contentWindow.document.getElementById('again').onclick = () => {
