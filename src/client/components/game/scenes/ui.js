@@ -121,7 +121,7 @@ class Ui extends Phaser.Scene {
 
   createTimer() {
     this.timer = this.add.text(
-      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "WOOP", 
+      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "", 
       {
         fontFamily: 'Pangolin',
         fontSize: SCORE_FONT_SIZE
