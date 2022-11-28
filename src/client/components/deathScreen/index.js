@@ -6,14 +6,16 @@ import Death from '../../images/crash.png';
 
 const Wrapper = styled.div`
   position: absolute;
-  width: 500px;
-  height: 600px;
+  width: 600px;
+  height: auto;
+  overflow: visible;
   transform: translateX(-50%);
   left: 50%;
   top: calc(50% - 275px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 20px;
   border-radius: 15px;
   background-color: rgba(126,85,233,0.85);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.45);
@@ -24,7 +26,7 @@ const Wrapper = styled.div`
     100% { opacity: 1; }
   }
   img {
-    height: 325px;
+    height: 300px;
     margin: 10px 0 10px 0;
   }
 `;
@@ -35,7 +37,6 @@ const DeathTitle = styled.h1`
   font-size: 36px;
   text-align: center;
   color: #000000;
-  margin: 22.5px 0 0 0;
 `;
 
 // Can't use modern warfare because it doesn't have numbers
@@ -81,7 +82,7 @@ const SecondaryButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-
+  margin-bottom: 10 px
   :hover {
     box-shadow: 0 0 0 white;
   }
