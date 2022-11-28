@@ -172,6 +172,7 @@ export default class MainMap extends Phaser.Scene {
 
     this.socket.on('setup', (data) => {
       this[_serverType] = data.serverType;
+      console.log(data);
       if(!data.isActive) {
         this.respawnButton.contentWindow.document.getElementById('title').innerHTML = `TOURNAMENT CLOSED`;
         this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Next Tournament Starts at ` + data.next;
@@ -340,7 +341,6 @@ export default class MainMap extends Phaser.Scene {
     }
     
     eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap]});
-    console.log(this[_serverType]);
     if(this[_serverType] == 'Tournament') {
       eventCenter.emit("countdown", this[_timeLeft]);
     }

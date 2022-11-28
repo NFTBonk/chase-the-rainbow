@@ -179,7 +179,9 @@ class Ui extends Phaser.Scene {
         },
       )
       .setDepth(100);
-    this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
+    if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
+     this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
+    }
     this.controlInfo.setScrollFactor(0);
   }
 

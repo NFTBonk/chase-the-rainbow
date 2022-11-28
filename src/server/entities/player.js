@@ -102,8 +102,8 @@ module.exports = class Player extends SocketEntity {
     this.tourneyCode = tourneyCode;
   }
 
-  setTournament(isTournament) {
-    this.isTournament = isTournament;
+  setTournament(tournament) {
+    this.isTournament = tournament;
   }
 
   setWinner() {

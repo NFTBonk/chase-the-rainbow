@@ -123,7 +123,7 @@ io.on('connection', (socket) => {
   
   const currentTime = new Date();
   let mins = currentTime.getMinutes();
-  if(serverType == Constants.SERVER_TYPE.TOURNAMENT && Constants.TOURNAMENT_COOLDOWN > 0 && mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION) {
+  if(serverType == Constants.SERVER_TYPE.TOURNAMENT && Constants.TOURNAMENT_COOLDOWN > 0 && mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) >= Constants.TOURNAMENT_DURATION) {
     //REJECT USER IF SERVER IS ON COOLDOWN
 
     startTime = new Date(currentTime);
@@ -178,6 +178,7 @@ io.on('connection', (socket) => {
       player.send('loggedIn1');
       player.setName(auth.name);
       player.spawn(auth.nft);
+      player.setTournament(serverType == Constants.SERVER_TYPE.TOURNAMENT ? 1 : 0);
     }
   });
 
@@ -211,10 +212,10 @@ setInterval(() => {
   const currentTime = new Date();
   if(serverType == Constants.SERVER_TYPE.TOURNAMENT) {
     let mins = currentTime.getMinutes();
-    if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) > Constants.TOURNAMENT_DURATION && !onCooldown) {
-      console.log("infinite loop");
+    if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) >= Constants.TOURNAMENT_DURATION && !onCooldown) {
       //GET WINNER
       let winner = [...players].sort((a, b) =>b.score - a.score)[0];
+      console.log(winner);
       players.forEach((player) => {
         if(player.id == winner.id) {
           player.setWinner();
@@ -222,12 +223,11 @@ setInterval(() => {
         player.die();
       });
       onCooldown = true;
-      players = new PlayerSet();
-      entities = new EntitySet();
       //UPLOAD HIGHEST SCORE TO LEADERBOARD
       return;
-    } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) <= Constants.TOURNAMENT_DURATION && onCooldown) {
-      console.log("infinite loop cooldown");
+    } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) < Constants.TOURNAMENT_DURATION && onCooldown) {
+      players = new PlayerSet();
+      entities = new EntitySet();
       onCooldown = false;
     }
     //IDENTIFY START TIME
