@@ -163,7 +163,9 @@ class Ui extends Phaser.Scene {
   }
 
   updateTimer(timeLeft) { 
-    this.timer.setText(this.pad2Digits(Math.floor(timeLeft / 60)) + ":" + this.pad2Digits(Math.floor(timeLeft % 60)));
+    if(timeLeft > 0) {
+      this.timer.setText(this.pad2Digits(Math.floor(timeLeft / 60)) + ":" + this.pad2Digits(Math.floor(timeLeft % 60)));
+    }
   }
 
   createControlInfo() {
