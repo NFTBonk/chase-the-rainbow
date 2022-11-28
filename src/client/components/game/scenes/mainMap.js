@@ -174,7 +174,7 @@ export default class MainMap extends Phaser.Scene {
       this[_serverType] = data.serverType;
       if(!data.isActive) {
         this.respawnButton.contentWindow.document.getElementById('title').innerHTML = `TOURNAMENT CLOSED`;
-        this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Next Tournament Starts at `;
+        this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Next Tournament Starts at ` + data.next;
         this.respawnButton.contentWindow.document.getElementById('again').innerHTML = `Change Server`;
         document.body.style.overflow = 'hidden';
         this.respawnButton.style.display = 'block';
