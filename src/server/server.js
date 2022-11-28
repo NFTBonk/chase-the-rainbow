@@ -321,6 +321,7 @@ setInterval(() => {
       players: playersInRadiusNetworkModel,
       entities: entitiesInRadiusNetworkModel,
       timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
+      isWinner: player.isWinner
     };
 
     if (player.ai) {

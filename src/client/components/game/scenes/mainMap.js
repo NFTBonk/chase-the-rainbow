@@ -12,6 +12,7 @@ import DeathScreen from '../../deathScreen/index';
 const _playerMap = Symbol("PlayerMap");
 const _serverType = Symbol("ServerType");
 const _timeLeft = Symbol("timeLeft");
+const _isWinner = Symbol("isWinner");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -79,7 +80,6 @@ export default class MainMap extends Phaser.Scene {
   }
 
   handleBoostButton(isBoostDown) {
-    console.log(isBoostDown);
     this.isBoostButtonPressed = isBoostDown;
   }
 
@@ -129,6 +129,9 @@ export default class MainMap extends Phaser.Scene {
 
     this.localPlayerSprite.on('death', () => {
       //TODO UPDATE TEXT DEPENDING ON TOURNAMENT TYPE
+      if(this[_isWinner]) {
+        this.respawnButton.contentWindow.document.getElementById('title').innerHTML = `YOU WON!`;
+      }
       this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Score: ${this.localPlayerSprite.score}`;
       this.respawnButton.contentWindow.document.getElementById('again').onclick = () => {
         this.socket.emit('forcedDisconnect');
@@ -172,7 +175,6 @@ export default class MainMap extends Phaser.Scene {
 
     this.socket.on('setup', (data) => {
       this[_serverType] = data.serverType;
-      console.log(data);
       if(!data.isActive) {
         this.respawnButton.contentWindow.document.getElementById('title').innerHTML = `TOURNAMENT CLOSED`;
         this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Next Tournament Starts at ` + data.next;
@@ -210,11 +212,12 @@ export default class MainMap extends Phaser.Scene {
     this[_playerMap] = new Map();
     const entityIds = new Set();
     const entityMap = new Map();
+    this[_isWinner] = false;
 
     this.socket.on('frame', (frame) => {
       this.localPlayerSprite.pushFrame(frame.localPlayer);
       this[_timeLeft] = frame.timeLeft;
-
+      this[_isWinner] = frame.isWinner;
       const newPlayerIds = new Set();
       const newEntityIds = new Set();
 
@@ -265,7 +268,7 @@ export default class MainMap extends Phaser.Scene {
           // get entity
           const entityToUpdate = entityMap.get(entity.id);
           const entityArray = Array.from(entityMap.values());
-          console.log(entityArray.filter((e) => e.x === entityToUpdate.x && e.y === entityToUpdate.y).length);
+          // console.log(entityArray.filter((e) => e.x === entityToUpdate.x && e.y === entityToUpdate.y).length);
           this.tweens.addCounter({
             from: 0,
             to: 1,
