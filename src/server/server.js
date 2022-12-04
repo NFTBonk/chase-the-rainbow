@@ -28,7 +28,7 @@ require('isomorphic-fetch');
 const app = express();
 const httpServer = createServer(app);
 
-const serverType = Constants.SERVER_TYPE.TOURNAMENT;
+const serverType = Constants.SERVER_TYPE.NORMAL;
 
 // CHANGE THIS LATER TO ONLY TRUSTED DOMAINS!!!!
 const io = new Server(httpServer, { cors: { origin: '*' } });

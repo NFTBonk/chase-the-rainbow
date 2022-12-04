@@ -35,6 +35,8 @@ module.exports = class Player extends SocketEntity {
     this.walletaddy = '';
     this.isTournament = 0;
     this.isWinner = false;
+    this.kills = 0;
+    this.killer = '';
 
     // Player inputs to process, updated as the player sends new packets.
     this.inputAngle = 0;
@@ -136,13 +138,14 @@ module.exports = class Player extends SocketEntity {
     this.trail.resetPosition(this.x, this.y);
   }
 
-  die() {
+  die(killer) {
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;
     }
     if (!this.ai && (this.isTournament == 0 || this.isWinner)) {
       const today = new Date();
 
+      //ADD TOTAL DEATH COUNT
       axios.post('http://localhost:3000/leaderBoard', {
         doodId: `${this.nft[0]}#${this.nft[1]}`,
         name: this.name,
@@ -151,7 +154,8 @@ module.exports = class Player extends SocketEntity {
         walletaddy: this.walletaddy,
         timestamp: `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`,
         timestamp2: Date.now(),
-        isTournament: this.isTournament
+        isTournament: this.isTournament,
+        kills: this.kills
       })
         .then((response) => {
           console.log(response.data);
@@ -161,6 +165,7 @@ module.exports = class Player extends SocketEntity {
         });
     }
     this.state = Constants.PLAYER_STATE.DEAD;
+    this.killer = killer;
     const bitsToDrop = Math.min(this.score / 10, 200);
     const bitsBetweenTrail = Math.min(Math.max(1, Math.floor(bitsToDrop / this.trail.trailQueue.length)), 100);
     const dropPositions = [];
@@ -217,10 +222,14 @@ module.exports = class Player extends SocketEntity {
    */
   onCollision(player, globalEntities) {
     if (this.score >= player.score && player.state === Constants.PLAYER_STATE.PLAYING) {
-      return player.die();
+      //QUEUE DEATH NOTIFICATION
+      //ADD DEATH COUNT
+      this.kills++;
+      return player.die(this.name);
     }
     if (this.score <= player.score && this.state === Constants.PLAYER_STATE.PLAYING) {
-      return this.die();
+      player.kills++;
+      return this.die(player.name);
     }
   }
 };
