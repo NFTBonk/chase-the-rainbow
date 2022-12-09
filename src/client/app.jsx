@@ -13,7 +13,7 @@ function App() {
   const [walletAddress, setWallet] = useState('');
   const [status, setStatus] = useState('');
   const [nfts, setNfts] = useState([]);
-  const mockNfts = true;
+  const mockNfts = false;
 
   //janky way of favicon
   const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
@@ -27,8 +27,7 @@ function App() {
     const fetchNfts = async () => {
       let nfts;
       if (mockNfts) {
-        // nfts = await (await wallet.grabNfts(walletAddress)).concat(data);
-        nfts = data;
+        nfts = await (await wallet.grabNfts(walletAddress)).concat(data);
       } else {
         nfts = await wallet.grabNfts(walletAddress);
       }
