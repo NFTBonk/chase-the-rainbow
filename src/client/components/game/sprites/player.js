@@ -29,6 +29,7 @@ export default class Player extends Phaser.GameObjects.Container {
 
     this.isLocalPlayer = isLocalPlayer;
     this.score = 0;
+    this.kills = 0;
     this.nameTag = this.scene.add.text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: '40px' }).setDepth(100);
 
     if (this.nft !== 'default' && this.nft) {
@@ -212,6 +213,7 @@ export default class Player extends Phaser.GameObjects.Container {
         eventCenter.emit('playerScore', nextTimestampFrame.frame.score);
       }
       this.score = nextTimestampFrame.frame.score;
+      this.kills = nextTimestampFrame.frame.kills;
     }
 
     // if (this.isLocalPlayer && this.visible == true) {
