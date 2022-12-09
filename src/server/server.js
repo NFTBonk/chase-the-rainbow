@@ -315,13 +315,17 @@ setInterval(() => {
     const entitiesInRadiusNetworkModel = Array.from(entitiesInRadius)
       .map((entityInRadius) => entityInRadius.getNetworkModel());
 
+    //GENERATE LIST OF DEAD PLAYERS
+    let dead = [...players].filter(player => player.state = Constants.PLAYER_STATE.DEAD);
+
     const framePacket = {
       id: frameId,
       localPlayer: player.getLocalPlayerNetworkModel(),
       players: playersInRadiusNetworkModel,
       entities: entitiesInRadiusNetworkModel,
       timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
-      isWinner: player.isWinner
+      isWinner: player.isWinner,
+      deadPlayers: dead
     };
 
     if (player.ai) {

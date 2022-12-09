@@ -209,6 +209,7 @@ module.exports = class Player extends SocketEntity {
     return Object.assign(this.getNetworkModel(), {
       score: this.score,
       gas: this.gas,
+      kills: this.kills
     });
   }
 
