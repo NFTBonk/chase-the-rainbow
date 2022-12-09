@@ -336,7 +336,7 @@ setInterval(() => {
   });
 
   // Send the leaderboard to all players
-  const lb = [...players].sort((a, b) => b.score - a.score).map((a) => ({ score: a.score, id: a.id, name: a.name }));
+  const lb = [...players].sort((a, b) => b.score - a.score).map((a) => ({ score: a.score, id: a.id, name: a.name, kills: a.kills }));
   io.sockets.emit('lb', lb);
 
   frameId += 1;
