@@ -58,7 +58,9 @@ class Ui extends Phaser.Scene {
       this.minimap.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
       this.minimapMask.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
       this.scoreGroup.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
-      this.timer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 3);
+      this.timer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 6);
+      this.killIcon.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 3);
+      this.killCount.setPosition(this.killIcon.x + this.killIcon.width, this.killIcon.y + this.killIcon.height * 0.5);
       this.fuelContainer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP - 20);
       this.fillMask.setPosition(this.fuelContainer.x + this.fuel.width * 0.5 - 15, this.fuelContainer.y + this.fuel.y - 200);
       this.controlInfo.setPosition(MARGIN_LEFT + this.fuel.width + this.fuelContainer.x, this.fuelContainer.y);
@@ -132,13 +134,15 @@ class Ui extends Phaser.Scene {
   }
 
   createKillCount() {
+    this.killIcon = this.add.image(his.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "killIcon");
     this.killCount = this.add.text(
-      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 6, ": 0", 
+      this.killIcon.x + this.killIcon.width, this.killIcon.y + this.killIcon.height * 0.5, ": 0", 
       {
         fontFamily: 'Pangolin',
         fontSize: SCORE_FONT_SIZE
       }
     ).setDepth(100);
+    this.killCount.setOrigin(0, 0.5);
   }
 
   createFuel() {
