@@ -30,6 +30,7 @@ class Ui extends Phaser.Scene {
     this.createFuel();
     this.createControlInfo();
     this.createMinimap();
+    this.createKillCount();
     this.createTimer();
     if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
       this.createJoystick();
@@ -48,6 +49,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('lb', this.lb.updateLeaderboard, this.lb); // listen for leaderboard updates
     eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
     eventCenter.on('countdown', this.updateTimer, this); //listen for timer updates
+    eventCenter.on('killCount', this.updateKillCount, this); //listen for timer updates
 
     this.scale.on('resize', (gameSize, baseSize, displaySize, previousWidth, previousHeight) => {
       let cullFactorHeight = (displaySize.height - displaySize._parent.height ) / displaySize.height;
@@ -121,7 +123,17 @@ class Ui extends Phaser.Scene {
 
   createTimer() {
     this.timer = this.add.text(
-      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "", 
+      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 6, "", 
+      {
+        fontFamily: 'Pangolin',
+        fontSize: SCORE_FONT_SIZE
+      }
+    ).setDepth(100);
+  }
+
+  createKillCount() {
+    this.killCount = this.add.text(
+      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 6, ": 0", 
       {
         fontFamily: 'Pangolin',
         fontSize: SCORE_FONT_SIZE
@@ -167,6 +179,11 @@ class Ui extends Phaser.Scene {
       this.timer.setText(this.pad2Digits(Math.floor(timeLeft / 60)) + ":" + this.pad2Digits(Math.floor(timeLeft % 60)));
     }
   }
+
+  updateKillCount(count) { 
+    this.killCount.setText(": " + this.killCount.toLocaleString());
+  }
+
 
   createControlInfo() {
     this.controlInfo = this.add

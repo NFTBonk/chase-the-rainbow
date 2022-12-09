@@ -211,6 +211,7 @@ export default class Player extends Phaser.GameObjects.Container {
       if (this.isLocalPlayer) {
         eventCenter.emit('playerFuel', nextTimestampFrame.frame.gas / Constants.GAS_MAX_DEFAULT);
         eventCenter.emit('playerScore', nextTimestampFrame.frame.score);
+        eventCenter.emit('killCount', nextTimestampFrame.frame.kills);
       }
       this.score = nextTimestampFrame.frame.score;
       this.kills = nextTimestampFrame.frame.kills;
