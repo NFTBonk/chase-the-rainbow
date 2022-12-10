@@ -42,6 +42,7 @@ class Ui extends Phaser.Scene {
     this.previousFuel = 1; // full tank
 
     this.lb = new Leaderboard(this, this.scale.baseSize.width * (1 - this.cullFactorWidth / 2) - MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP);
+    this.killNotif = new Leaderboard(this, this.scale.baseSize.width * 0.5, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3);
 
     eventCenter.on('playerScore', this.updateScore, this); // listen for score updates
     eventCenter.on('playerFuel', this.updateFuelBar, this); // listen for fuel updates
@@ -50,6 +51,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
     eventCenter.on('countdown', this.updateTimer, this); //listen for timer updates
     eventCenter.on('killCount', this.updateKillCount, this); //listen for timer updates
+    eventCenter.on('killNotif', this.killNotif.addToQueue, this); //listen for timer updates
 
     this.scale.on('resize', (gameSize, baseSize, displaySize, previousWidth, previousHeight) => {
       let cullFactorHeight = (displaySize.height - displaySize._parent.height ) / displaySize.height;

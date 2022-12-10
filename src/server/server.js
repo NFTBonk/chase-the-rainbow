@@ -316,7 +316,7 @@ setInterval(() => {
       .map((entityInRadius) => entityInRadius.getNetworkModel());
 
     //GENERATE LIST OF DEAD PLAYERS
-    let dead = [...players].filter(player => player.state = Constants.PLAYER_STATE.DEAD);
+    let dead = [...players].filter(player => player.state = Constants.PLAYER_STATE.DEAD).map((player => ({dead: player.name, killer: player.killer}) ));
 
     const framePacket = {
       id: frameId,

@@ -221,6 +221,8 @@ export default class MainMap extends Phaser.Scene {
       const newPlayerIds = new Set();
       const newEntityIds = new Set();
 
+      eventCenter.emit("killNotif", frame.dead);
+
       frame.players.forEach((player) => {
         newPlayerIds.add(player.id);
         if (!playerIds.has(player.id)) {
