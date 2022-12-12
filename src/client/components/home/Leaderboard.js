@@ -222,7 +222,7 @@ function Leaderboard() {
         <LeaderboardSection>
         <LeaderboardPanel>
           <H1>Global Kill</H1> <h4>Leaderboard</h4>
-          {rankings?.globalKills?.map((social,index) => (
+          {rankings?.globalKill?.map((social,index) => (
             <LeaderboardRow key={index}>
               <LeaderboardText>
                 {`${social.name}`}
