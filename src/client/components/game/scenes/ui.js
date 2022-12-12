@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import FuelBar from '../sprites/fuelbar';
+import KillNotif from '../sprites/killNotif';
 import Leaderboard from '../sprites/leaderboard';
 import Minimap from '../sprites/minimap';
 import eventCenter from './eventCenter';
@@ -42,7 +43,7 @@ class Ui extends Phaser.Scene {
     this.previousFuel = 1; // full tank
 
     this.lb = new Leaderboard(this, this.scale.baseSize.width * (1 - this.cullFactorWidth / 2) - MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP);
-    this.killNotif = new Leaderboard(this, this.scale.baseSize.width * 0.5, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3);
+    this.killNotif = new KillNotif(this, this.scale.baseSize.width * 0.5, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3);
 
     eventCenter.on('playerScore', this.updateScore, this); // listen for score updates
     eventCenter.on('playerFuel', this.updateFuelBar, this); // listen for fuel updates
@@ -51,7 +52,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
     eventCenter.on('countdown', this.updateTimer, this); //listen for timer updates
     eventCenter.on('killCount', this.updateKillCount, this); //listen for timer updates
-    eventCenter.on('killNotif', this.killNotif.addToQueue, this); //listen for timer updates
+    eventCenter.on('killNotif', this.killNotif.addToQueue, this.killNotif); //listen for timer updates
 
     this.scale.on('resize', (gameSize, baseSize, displaySize, previousWidth, previousHeight) => {
       let cullFactorHeight = (displaySize.height - displaySize._parent.height ) / displaySize.height;
@@ -67,6 +68,7 @@ class Ui extends Phaser.Scene {
       this.fillMask.setPosition(this.fuelContainer.x + this.fuel.width * 0.5 - 15, this.fuelContainer.y + this.fuel.y - 200);
       this.controlInfo.setPosition(MARGIN_LEFT + this.fuel.width + this.fuelContainer.x, this.fuelContainer.y);
       this.lb.setPosition(baseSize.width * (1 - cullFactorWidth / 2) - MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
+      this.killNotif.setPosition(baseSize.width * 0.5, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 3);
       this.joyStick.setPosition(baseSize.width * cullFactorWidth / 2 + 275, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP -  200,)
       if(displaySize._parent.height > displaySize._parent.width) {
         this.scene.launch("rotate");
@@ -136,7 +138,7 @@ class Ui extends Phaser.Scene {
   }
 
   createKillCount() {
-    this.killIcon = this.add.image(his.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "killIcon");
+    this.killIcon = this.add.image(this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "killIcon").setOrigin(0);
     this.killCount = this.add.text(
       this.killIcon.x + this.killIcon.width, this.killIcon.y + this.killIcon.height * 0.5, ": 0", 
       {
@@ -187,7 +189,7 @@ class Ui extends Phaser.Scene {
   }
 
   updateKillCount(count) { 
-    this.killCount.setText(": " + this.killCount.toLocaleString());
+    this.killCount.setText(": " + count.toLocaleString());
   }
 
 

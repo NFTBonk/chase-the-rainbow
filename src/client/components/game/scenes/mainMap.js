@@ -127,7 +127,7 @@ export default class MainMap extends Phaser.Scene {
       this.respawnButton.style.display = 'none';
     });
 
-    this.localPlayerSprite.on('death', () => {
+    this.localPlayerSprite.on('death', (data) => {
       //TODO UPDATE TEXT DEPENDING ON TOURNAMENT TYPE
       if(this[_isWinner]) {
         this.respawnButton.contentWindow.document.getElementById('title').innerHTML = `YOU WON!`;
@@ -191,7 +191,7 @@ export default class MainMap extends Phaser.Scene {
           window.location.replace(this.prodMode ? 'https://www.chasetherainbow.app' : 'http://localhost:3000');
           clearTimeout(this.AFKKick);
         };
-      }
+      } 
     })
 
     this.socket.on('loggedIn', () => {
@@ -202,6 +202,11 @@ export default class MainMap extends Phaser.Scene {
       if (!this.loggedIn) return;
       eventCenter.emit('lb', data);
     });
+
+    this.socket.on('death', (data) => {
+      console.log(data);
+      eventCenter.emit('killNotif', data);
+    })
     // Create key listener and check if player is boosting
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKeyPressed = false;
@@ -220,8 +225,6 @@ export default class MainMap extends Phaser.Scene {
       this[_isWinner] = frame.isWinner;
       const newPlayerIds = new Set();
       const newEntityIds = new Set();
-
-      eventCenter.emit("killNotif", frame.dead);
 
       frame.players.forEach((player) => {
         newPlayerIds.add(player.id);

@@ -68,14 +68,15 @@ function applyTrailCollisions(player, otherPlayers) {
         { x: 0, y: 0 },
         { x: trail[i + 1].x - trail[i].x, y: trail[i + 1].y - trail[i].y },
       ]);
-      trailPolygon.owner = otherPlayer.name;
+      trailPolygon.owner = otherPlayer;
       system.insert(trailPolygon);
     }
   });
   const drops = [];
   system.getPotentials(line).forEach((potential) => {
     if (system.checkCollision(line, potential)) {
-      const drop = player.die(potential.owner);
+      const drop = player.die(potential.owner.name);
+      potential.owner.kills++;
 
       if (drop) {
         drop.forEach((pos) => {

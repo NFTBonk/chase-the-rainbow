@@ -100,6 +100,7 @@ export default class Player extends Phaser.GameObjects.Container {
     }
     if (prevFrame.state !== Constants.PLAYER_STATE.DEAD
       && nextFrame.state === Constants.PLAYER_STATE.DEAD) {
+        this.killer = nextFrame.killer;
       this.onDeath();
     }
   }

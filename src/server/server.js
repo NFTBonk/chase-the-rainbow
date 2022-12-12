@@ -189,6 +189,12 @@ io.on('connection', (socket) => {
     players.delete(player);
   });
 
+  socket.on('die', (data) => {
+    console.log('die');
+    console.log(data);
+    io.sockets.emit("death", data);
+  })
+
   socket.on('forceDisconnect', () => {
     console.log(`user disconnected: ${socket.id}`);
     players.delete(player);
@@ -217,7 +223,6 @@ setInterval(() => {
     if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) >= Constants.TOURNAMENT_DURATION && !onCooldown) {
       //GET WINNER
       let winner = [...players].sort((a, b) =>b.score - a.score)[0];
-      console.log(winner);
       players.forEach((player) => {
         if(player.id == winner.id) {
           player.setWinner();
@@ -318,8 +323,6 @@ setInterval(() => {
       .map((entityInRadius) => entityInRadius.getNetworkModel());
 
     //GENERATE LIST OF DEAD PLAYERS
-    let dead = [...players].filter(player => player.state = Constants.PLAYER_STATE.DEAD).map((player => ({dead: player.name, killer: player.killer}) ));
-
     const framePacket = {
       id: frameId,
       localPlayer: player.getLocalPlayerNetworkModel(),
@@ -327,7 +330,6 @@ setInterval(() => {
       entities: entitiesInRadiusNetworkModel,
       timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
       isWinner: player.isWinner,
-      deadPlayers: dead
     };
 
     if (player.ai) {

@@ -142,6 +142,8 @@ module.exports = class Player extends SocketEntity {
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;
     }
+
+
     if (!this.ai && (this.isTournament == 0 || this.isWinner)) {
       const today = new Date();
 
@@ -178,6 +180,9 @@ module.exports = class Player extends SocketEntity {
         });
       }
     });
+
+    this.send('die', {dead: this.name, killer: this.killer});
+
     this.trail.setLength(0);
     return dropPositions;
   }
