@@ -91,8 +91,10 @@ app.get('/leaderBoard/:walletAddress', async (request, response, next) => {
 app.get('/leaderBoard', async (request, response, next) => {
   try {
     const globalRanking = await collection.find().sort({ score: -1 }).limit(10).toArray();
+    const globalKillRanking = await collection.find().sort({ kills: -1 }).limit(10).toArray();
     const weeklyRanking = await collection.find({ timestamp2: { $gte: Date.now() - 7 * 60 * 60 * 24 * 1000 } }).sort({ score: -1 }).limit(10).toArray();
-    response.send({ global: globalRanking, weekly: weeklyRanking });
+    const weeklyKillRanking = await collection.find({ timestamp2: { $gte: Date.now() - 7 * 60 * 60 * 24 * 1000 } }).sort({ kills: -1 }).limit(10).toArray();
+    response.send({ global: globalRanking, weekly: weeklyRanking, globalKill: globalKillRanking, weeklyKill: weeklyKillRanking });
   } catch (e) {
     response.status(500).send({ message: e.message });
   }
