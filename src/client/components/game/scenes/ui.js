@@ -30,6 +30,7 @@ class Ui extends Phaser.Scene {
     this.createFuel();
     this.createControlInfo();
     this.createMinimap();
+    this.createTimer();
     if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
       this.createJoystick();
       this.createBoostButton();
@@ -46,6 +47,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('spacebar', this.onUseGas, this); // listen for fuel updates
     eventCenter.on('lb', this.lb.updateLeaderboard, this.lb); // listen for leaderboard updates
     eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
+    eventCenter.on('countdown', this.updateTimer, this); //listen for timer updates
 
     this.scale.on('resize', (gameSize, baseSize, displaySize, previousWidth, previousHeight) => {
       let cullFactorHeight = (displaySize.height - displaySize._parent.height ) / displaySize.height;
@@ -54,6 +56,7 @@ class Ui extends Phaser.Scene {
       this.minimap.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
       this.minimapMask.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
       this.scoreGroup.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
+      this.timer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 3);
       this.fuelContainer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP - 20);
       this.fillMask.setPosition(this.fuelContainer.x + this.fuel.width * 0.5 - 15, this.fuelContainer.y + this.fuel.y - 200);
       this.controlInfo.setPosition(MARGIN_LEFT + this.fuel.width + this.fuelContainer.x, this.fuelContainer.y);
@@ -116,6 +119,16 @@ class Ui extends Phaser.Scene {
     this.score.setScrollFactor(0);
   }
 
+  createTimer() {
+    this.timer = this.add.text(
+      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "", 
+      {
+        fontFamily: 'Pangolin',
+        fontSize: SCORE_FONT_SIZE
+      }
+    ).setDepth(100);
+  }
+
   createFuel() {
     this.fuelContainer = this.add.container(this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (1 - this.cullFactorHeight / 2) - MARGIN_TOP- 20);
     this.fuel = this.add
@@ -145,6 +158,16 @@ class Ui extends Phaser.Scene {
     this.previousScore = currentScore;
   }
 
+  pad2Digits(num) {
+    return String(num).padStart(2, '0');
+  }
+
+  updateTimer(timeLeft) { 
+    if(timeLeft > 0) {
+      this.timer.setText(this.pad2Digits(Math.floor(timeLeft / 60)) + ":" + this.pad2Digits(Math.floor(timeLeft % 60)));
+    }
+  }
+
   createControlInfo() {
     this.controlInfo = this.add
       .text(
@@ -156,7 +179,9 @@ class Ui extends Phaser.Scene {
         },
       )
       .setDepth(100);
-    this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
+    if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
+     this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
+    }
     this.controlInfo.setScrollFactor(0);
   }
 

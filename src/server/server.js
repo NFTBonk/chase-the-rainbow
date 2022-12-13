@@ -18,6 +18,8 @@ const RainbowBit = require('./entities/rainbowBit');
 
 const EntitySet = require('./sets/entitySet');
 const PlayerSet = require('./sets/playerSet');
+const { TOURNAMENT_COOLDOWN } = require('../shared/constants');
+const { WineBarRounded } = require('@mui/icons-material');
 
 require('dotenv').config();
 require('isomorphic-fetch');
@@ -25,6 +27,8 @@ require('isomorphic-fetch');
 // Set up server
 const app = express();
 const httpServer = createServer(app);
+
+const serverType = Constants.SERVER_TYPE.TOURNAMENT;
 
 // CHANGE THIS LATER TO ONLY TRUSTED DOMAINS!!!!
 const io = new Server(httpServer, { cors: { origin: '*' } });
@@ -96,8 +100,8 @@ app.get('/leaderBoard', async (request, response, next) => {
 
 // TODO: Combine both players and entities list.
 // TODO: Restructure entities to have hierarchy, and single World .
-const players = new PlayerSet();
-const entities = new EntitySet();
+let players = new PlayerSet();
+let entities = new EntitySet();
 
 httpServer.listen(process.env.PORT || 3000, async () => {
   try {
@@ -111,9 +115,32 @@ httpServer.listen(process.env.PORT || 3000, async () => {
 
 io.on('connection', (socket) => {
   console.log(`user connected: ${socket.id}`);
+  
 
   const player = new Player(socket.id, socket);
   players.add(player);
+
+  
+  const currentTime = new Date();
+  let mins = currentTime.getMinutes();
+  if(serverType == Constants.SERVER_TYPE.TOURNAMENT && Constants.TOURNAMENT_COOLDOWN > 0 && mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) >= Constants.TOURNAMENT_DURATION) {
+    //REJECT USER IF SERVER IS ON COOLDOWN
+
+    startTime = new Date(currentTime);
+    startTime.setMinutes(Math.floor(mins / (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN)) * (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN))
+    startTime.setSeconds(0);
+    startTime.setMilliseconds(0);
+
+    endTime = new Date(startTime);
+    endTime.setMinutes(startTime.getMinutes() + Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN);
+    player.send('setup', {serverType: serverType, isActive: false, next: endTime.toLocaleTimeString('default', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })});
+    return;
+  } else {
+    player.send('setup', {serverType: serverType, isActive: true});
+  }
 
   socket.on('angle', (angle) => {
     player.inputAngle = angle;
@@ -140,6 +167,7 @@ io.on('connection', (socket) => {
             player.spawn(auth.nft);
             player.setTourneyCode(auth.tourneyCode);
             player.setWallet(auth.walletaddy);
+            player.setTournament(serverType == Constants.SERVER_TYPE.TOURNAMENT ? 1 : 0);
           } else {
             console.log('recaptcha failed', json['error-codes']);
           // add some way to notify player the recaptcha failed
@@ -150,6 +178,7 @@ io.on('connection', (socket) => {
       player.send('loggedIn1');
       player.setName(auth.name);
       player.spawn(auth.nft);
+      player.setTournament(serverType == Constants.SERVER_TYPE.TOURNAMENT ? 1 : 0);
     }
   });
 
@@ -175,11 +204,45 @@ const TICK_INTERVAL = 200;
 // Main game loop / tick.
 let frameId = 0;
 let lastTime = new Date().getTime();
+let onCooldown = false;
+let startTime = new Date();
+let endTime = new Date();
 setInterval(() => {
   // Log delta interval.
-  const currentTime = new Date().getTime();
+  const currentTime = new Date();
+  if(serverType == Constants.SERVER_TYPE.TOURNAMENT) {
+    let mins = currentTime.getMinutes();
+    if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) >= Constants.TOURNAMENT_DURATION && !onCooldown) {
+      //GET WINNER
+      let winner = [...players].sort((a, b) =>b.score - a.score)[0];
+      console.log(winner);
+      players.forEach((player) => {
+        if(player.id == winner.id) {
+          player.setWinner();
+        }
+        player.die();
+      });
+      onCooldown = true;
+      //UPLOAD HIGHEST SCORE TO LEADERBOARD
+      return;
+    } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) < Constants.TOURNAMENT_DURATION && onCooldown) {
+      players = new PlayerSet();
+      entities = new EntitySet();
+      onCooldown = false;
+    }
+    //IDENTIFY START TIME
+    startTime = new Date(currentTime);
+    startTime.setMinutes(Math.floor(mins / (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN)) * (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN))
+    startTime.setSeconds(0);
+    startTime.setMilliseconds(0);
+
+    endTime = new Date(startTime);
+    endTime.setMinutes(startTime.getMinutes() + Constants.TOURNAMENT_DURATION);
+  }
+
+
   // console.log(currentTime - lastTime);
-  lastTime = currentTime;
+  lastTime = currentTime.getTime();
   // Run entity updates.
   players.forEach((player) => {
     player.update(new Date().getTime(), TICK_INTERVAL);
@@ -257,6 +320,8 @@ setInterval(() => {
       localPlayer: player.getLocalPlayerNetworkModel(),
       players: playersInRadiusNetworkModel,
       entities: entitiesInRadiusNetworkModel,
+      timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
+      isWinner: player.isWinner
     };
 
     if (player.ai) {
