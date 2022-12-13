@@ -10,10 +10,10 @@ export default class KillNotif extends Phaser.GameObjects.Container {
     this.killQueue = [];
 
     this.killText = scene.add
-    .text(0, 0, 'Place Kill Notif Here', { fontFamily: '"Pangolin"', fontSize: LB_FONT_SIZE,  })
+    .text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: LB_FONT_SIZE,  })
     .setDepth(100)
     .setOrigin(0.5, 0.5)
-    // .setAlpha(0);
+    .setAlpha(0);
     
     this.animationTL = scene.tweens.createTimeline();
     this.animationTL.add({

@@ -143,7 +143,6 @@ module.exports = class Player extends SocketEntity {
       return v0 * (1 - t) + v1 * t;
     }
 
-
     if (!this.ai && (this.isTournament == 0 || this.isWinner)) {
       const today = new Date();
 
@@ -168,6 +167,11 @@ module.exports = class Player extends SocketEntity {
     }
     this.state = Constants.PLAYER_STATE.DEAD;
     this.killer = killer;
+
+    if(this.onDeath != null) {
+      this.onDeath({dead: this.name, killer: this.killer});
+    }
+
     const bitsToDrop = Math.min(this.score / 10, 200);
     const bitsBetweenTrail = Math.min(Math.max(1, Math.floor(bitsToDrop / this.trail.trailQueue.length)), 100);
     const dropPositions = [];

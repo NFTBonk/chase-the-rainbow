@@ -119,7 +119,10 @@ io.on('connection', (socket) => {
   console.log(`user connected: ${socket.id}`);
   
 
-  const player = new Player(socket.id, socket);
+  let player = new Player(socket.id, socket);
+  player.onDeath = (data) => {
+    io.sockets.emit("death", data);
+  }
   players.add(player);
 
   
@@ -188,12 +191,6 @@ io.on('connection', (socket) => {
     console.log(`user disconnected: ${socket.id}`);
     players.delete(player);
   });
-
-  socket.on('die', (data) => {
-    console.log('die');
-    console.log(data);
-    io.sockets.emit("death", data);
-  })
 
   socket.on('forceDisconnect', () => {
     console.log(`user disconnected: ${socket.id}`);
