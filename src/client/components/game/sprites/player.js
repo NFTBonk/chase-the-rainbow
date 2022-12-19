@@ -29,6 +29,7 @@ export default class Player extends Phaser.GameObjects.Container {
 
     this.isLocalPlayer = isLocalPlayer;
     this.score = 0;
+    this.kills = 0;
     this.nameTag = this.scene.add.text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: '40px' }).setDepth(100);
 
     if (this.nft !== 'default' && this.nft) {
@@ -99,6 +100,7 @@ export default class Player extends Phaser.GameObjects.Container {
     }
     if (prevFrame.state !== Constants.PLAYER_STATE.DEAD
       && nextFrame.state === Constants.PLAYER_STATE.DEAD) {
+        this.killer = nextFrame.killer;
       this.onDeath();
     }
   }
@@ -210,8 +212,10 @@ export default class Player extends Phaser.GameObjects.Container {
       if (this.isLocalPlayer) {
         eventCenter.emit('playerFuel', nextTimestampFrame.frame.gas / Constants.GAS_MAX_DEFAULT);
         eventCenter.emit('playerScore', nextTimestampFrame.frame.score);
+        eventCenter.emit('killCount', nextTimestampFrame.frame.kills);
       }
       this.score = nextTimestampFrame.frame.score;
+      this.kills = nextTimestampFrame.frame.kills;
     }
 
     // if (this.isLocalPlayer && this.visible == true) {

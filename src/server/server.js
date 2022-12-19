@@ -28,7 +28,7 @@ require('isomorphic-fetch');
 const app = express();
 const httpServer = createServer(app);
 
-const serverType = Constants.SERVER_TYPE.TOURNAMENT;
+const serverType = Constants.SERVER_TYPE.NORMAL;
 
 // CHANGE THIS LATER TO ONLY TRUSTED DOMAINS!!!!
 const io = new Server(httpServer, { cors: { origin: '*' } });
@@ -91,8 +91,10 @@ app.get('/leaderBoard/:walletAddress', async (request, response, next) => {
 app.get('/leaderBoard', async (request, response, next) => {
   try {
     const globalRanking = await collection.find().sort({ score: -1 }).limit(10).toArray();
+    const globalKillRanking = await collection.find().sort({ kills: -1 }).limit(10).toArray();
     const weeklyRanking = await collection.find({ timestamp2: { $gte: Date.now() - 7 * 60 * 60 * 24 * 1000 } }).sort({ score: -1 }).limit(10).toArray();
-    response.send({ global: globalRanking, weekly: weeklyRanking });
+    const weeklyKillRanking = await collection.find({ timestamp2: { $gte: Date.now() - 7 * 60 * 60 * 24 * 1000 } }).sort({ kills: -1 }).limit(10).toArray();
+    response.send({ global: globalRanking, weekly: weeklyRanking, globalKill: globalKillRanking, weeklyKill: weeklyKillRanking });
   } catch (e) {
     response.status(500).send({ message: e.message });
   }
@@ -117,7 +119,10 @@ io.on('connection', (socket) => {
   console.log(`user connected: ${socket.id}`);
   
 
-  const player = new Player(socket.id, socket);
+  let player = new Player(socket.id, socket);
+  player.onDeath = (data) => {
+    io.sockets.emit("death", data);
+  }
   players.add(player);
 
   
@@ -215,7 +220,6 @@ setInterval(() => {
     if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) >= Constants.TOURNAMENT_DURATION && !onCooldown) {
       //GET WINNER
       let winner = [...players].sort((a, b) =>b.score - a.score)[0];
-      console.log(winner);
       players.forEach((player) => {
         if(player.id == winner.id) {
           player.setWinner();
@@ -315,13 +319,14 @@ setInterval(() => {
     const entitiesInRadiusNetworkModel = Array.from(entitiesInRadius)
       .map((entityInRadius) => entityInRadius.getNetworkModel());
 
+    //GENERATE LIST OF DEAD PLAYERS
     const framePacket = {
       id: frameId,
       localPlayer: player.getLocalPlayerNetworkModel(),
       players: playersInRadiusNetworkModel,
       entities: entitiesInRadiusNetworkModel,
       timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
-      isWinner: player.isWinner
+      isWinner: player.isWinner,
     };
 
     if (player.ai) {
@@ -332,7 +337,7 @@ setInterval(() => {
   });
 
   // Send the leaderboard to all players
-  const lb = [...players].sort((a, b) => b.score - a.score).map((a) => ({ score: a.score, id: a.id, name: a.name }));
+  const lb = [...players].sort((a, b) => b.score - a.score).map((a) => ({ score: a.score, id: a.id, name: a.name, kills: a.kills }));
   io.sockets.emit('lb', lb);
 
   frameId += 1;
