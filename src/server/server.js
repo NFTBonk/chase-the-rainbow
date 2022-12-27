@@ -196,13 +196,29 @@ setInterval(() => {
   // Generating entities if there are less than the max amount
   if (entities.size < Constants.MAX_ITEMS) {
     for (let i = entities.size; i < Constants.MAX_ITEMS; i++) {
-      // 50/50 chance to generate either a rainbow bit or a fuel tank
-      if (Math.random() < 0.5) {
-        const rainbowBit = new RainbowBit();
-        entities.add(rainbowBit);
+     
+      //10% chance to generate a powerup 90% chance to generate non-powerup entities
+      if(Math.random() < 0.1) {
+        let powerupTypeRandomizer = Math.random();
+        if(powerupTypeRandomizer < 0.25) {
+          //SPEEDUP
+        } else if (powerupTypeRandomizer >= 0.25 && powerupTypeRandomizer < 0.5) {
+          //2X
+        } else if (powerupTypeRandomizer >= 0.5 && powerupTypeRandomizer < 0.75) {
+          //INVULNERABLE
+        } else {
+          //MAGNET
+        }
+        
       } else {
-        const fuelTank = new FuelTank();
-        entities.add(fuelTank);
+        // 50/50 chance to generate either a rainbow bit or a fuel tank
+        if (Math.random() < 0.5) {
+          const rainbowBit = new RainbowBit();
+          entities.add(rainbowBit);
+        } else {
+          const fuelTank = new FuelTank();
+          entities.add(fuelTank);
+        }
       }
     }
   }
