@@ -15,6 +15,10 @@ module.exports = Object.freeze({
     RAINBOW_BIT: 'rainbowBit',
     FUEL_TANK: 'fuelTank',
     DEBUG_CIRCLE: 'debugCircle',
+    SPEED_UP: 'speedUp',
+    X2: 'x2',
+    INVULNERABLE: 'invulnerable',
+    MAGNET: 'magnet'
   },
   PLAYER_RADIUS: 35,
   ITEM_RADIUS: 25 /** rainbow bits and fuel tanks */,
