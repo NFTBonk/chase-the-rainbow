@@ -3,9 +3,9 @@ const Constants = require('../../shared/constants');
 const Entity = require('./entity');
 
 /**
- * An object that speeds up player when picked up.
+ * An object that increases a double player's size and score gain when picked up.
  */
-class SpeedUp extends Entity {
+class Double extends Entity {
   constructor() {
     super();
 
@@ -13,7 +13,7 @@ class SpeedUp extends Entity {
     this.type = Constants.ENTITY_TYPE.SPEED_UPs;
     this.collectedBy = false;
 
-    // speedup geometric attributes.
+    // double geometric attributes.
     this.x = Math.floor(Math.random() * (Constants.MAP_SIZE - 200) + 100);
     this.y = Math.floor(Math.random() * (Constants.MAP_SIZE - 200) + 100);
     this.radius = Constants.ITEM_RADIUS;
@@ -40,4 +40,4 @@ class SpeedUp extends Entity {
   }
 }
 
-module.exports = SpeedUp;
+module.exports = Double;
