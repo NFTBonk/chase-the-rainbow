@@ -66,7 +66,7 @@ module.exports = class Player extends SocketEntity {
       // handle boosting
       if (this.boosting && this.gas >= dt * 0.1) {
         if(this.speedUpTime > 0) {
-          this.speed = 1.5;
+          this.speed = 1;
         } else {
           this.speed = 0.75;
         }
@@ -74,7 +74,7 @@ module.exports = class Player extends SocketEntity {
       } else {
         this.boosting = false;
         if(this.speedUpTime > 0) {
-          this.speed = 1;
+          this.speed = 0.75;
         } else {
           this.speed = 0.5;
         }
