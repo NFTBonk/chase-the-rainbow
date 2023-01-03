@@ -30,13 +30,13 @@ class Invulnerable extends Entity {
   }
 
   onCollision(player, globalEntities) {
-    // if (!this.collectedBy) {
-    //   player.addGas();
-    //   this.collectedBy = player.id;
-    //   setTimeout(() => {
-    //     globalEntities.delete(this);
-    //   }, 500);
-    // }
+    if (!this.collectedBy) {
+      player.activateInvul();
+      this.collectedBy = player.id;
+      setTimeout(() => {
+        globalEntities.delete(this);
+      }, 500);
+    }
   }
 }
 

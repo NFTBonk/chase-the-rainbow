@@ -30,13 +30,13 @@ class SpeedUp extends Entity {
   }
 
   onCollision(player, globalEntities) {
-    // if (!this.collectedBy) {
-    //   player.addGas();
-    //   this.collectedBy = player.id;
-    //   setTimeout(() => {
-    //     globalEntities.delete(this);
-    //   }, 500);
-    // }
+    if (!this.collectedBy) {
+      player.activateSpeedUp();
+      this.collectedBy = player.id;
+      setTimeout(() => {
+        globalEntities.delete(this);
+      }, 500);
+    }
   }
 }
 

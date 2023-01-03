@@ -33,6 +33,10 @@ module.exports = class Player extends SocketEntity {
     this.speed = 0.5;
     this.tourneyCode = '';
     this.walletaddy = '';
+    this.speedUpTime = 0;
+    this.doubleTime = 0;
+    this.magnetTime = 0;
+    this.invulTime = 0;
 
     // Player inputs to process, updated as the player sends new packets.
     this.inputAngle = 0;
@@ -68,6 +72,40 @@ module.exports = class Player extends SocketEntity {
         this.speed = 0.5;
       }
 
+      if(this.speedUpTime > 0) {
+        this.speedUpTime -= dt;
+
+        if(this.speedUpTime < 0) {
+          this.speedUpTime = 0;
+        }
+      } 
+
+      if(this.doubleTime > 0) {
+        this.doubleTime -= dt;
+
+        if(this.doubleTime < 0) {
+          this.doubleTime = 0;
+        }
+      } 
+
+      if(this.invulTime > 0) {
+        this.invulTime -= dt;
+
+        if(this.invulTime < 0) {
+          this.invulTime = 0;
+        }
+      } 
+
+      if(this.magnetTime > 0) {
+        this.magnetTime -= dt;
+
+        if(this.magnetTime < 0) {
+          this.magnetTime = 0;
+        }
+      } 
+
+
+
       // reset trail length after 1500 points, when player increases tier
       if (this.score % 1500 === 0) {
         this.trail.setLength(1);
@@ -90,6 +128,22 @@ module.exports = class Player extends SocketEntity {
   addScore() {
     this.score += Constants.SCORE_ADD_INCREMENT;
     this.trail.setLength(Math.floor(this.score % 1500 * Constants.SCORE_TO_TRAIL_LENGTH_RATIO) + 1);
+  }
+
+  activateSpeedUp() {
+    this.speedUpTime = 30000;
+  }
+
+  activateDouble() {
+    this.doubleTime = 30000;
+  }
+
+  activateInvul() {
+    this.invulTime = 30000;
+  }
+
+  activateMagnet() {
+    this.magnetTime = 30000;
   }
 
   setName(name) {
