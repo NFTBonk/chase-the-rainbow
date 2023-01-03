@@ -14,4 +14,14 @@ module.exports = class EntitySet extends Set {
       return Distance.Between(entity.x, entity.y, _x, _y) <= _radius;
     }));
   }
+
+  //generate set for all powerups
+  getAllPowerupEntities() {
+    return new Set(Array.from(this).filter((entity) => {
+      return entity.type === constants.ENTITY_TYPE.INVULNERABLE ||
+      entity.type === constants.ENTITY_TYPE.MAGNET ||
+      entity.type === constants.ENTITY_TYPE.X2 ||
+      entity.type === constants.ENTITY_TYPE.SPEED_UP;
+    }));
+  }
 };

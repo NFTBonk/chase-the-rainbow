@@ -263,6 +263,7 @@ setInterval(() => {
     }
 
     const entitiesInRadius = entities.getAllEntitiesWithinRadius(player.x, player.y, 2000);
+    const powerupEntities = entities.getAllPowerupEntities();
 
     // Filter out all players not yet logged in.
     playersInRadius = new Set(Array.from(playersInRadius).filter(
@@ -274,11 +275,14 @@ setInterval(() => {
     const entitiesInRadiusNetworkModel = Array.from(entitiesInRadius)
       .map((entityInRadius) => entityInRadius.getNetworkModel());
 
+
+    //PASS POWERUPS
     const framePacket = {
       id: frameId,
       localPlayer: player.getLocalPlayerNetworkModel(),
       players: playersInRadiusNetworkModel,
       entities: entitiesInRadiusNetworkModel,
+      powerups: powerupEntities
     };
 
     if (player.ai) {
