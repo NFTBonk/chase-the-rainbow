@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
 const { createServer } = require('http');
-const { MongoClient } = require('mongodb');
+const { MongoClient, Double } = require('mongodb');
 const { Server } = require('socket.io');
 const { v4: uuidv4 } = require('uuid');
 
@@ -18,6 +18,8 @@ const RainbowBit = require('./entities/rainbowBit');
 
 const EntitySet = require('./sets/entitySet');
 const PlayerSet = require('./sets/playerSet');
+const SpeedUp = require('./entities/speedUp');
+const Invulnerable = require('./entities/invulnerable');
 
 require('dotenv').config();
 require('isomorphic-fetch');
@@ -201,13 +203,17 @@ setInterval(() => {
       if(Math.random() < 0.1) {
         let powerupTypeRandomizer = Math.random();
         if(powerupTypeRandomizer < 0.25) {
-          //SPEEDUP
+          const speedUp = new SpeedUp();
+          entities.add(speedUp);
         } else if (powerupTypeRandomizer >= 0.25 && powerupTypeRandomizer < 0.5) {
-          //2X
+          const double = new Double();
+          entities.add(double);
         } else if (powerupTypeRandomizer >= 0.5 && powerupTypeRandomizer < 0.75) {
-          //INVULNERABLE
+          const invul = new Invulnerable();
+          entities.add(invul);
         } else {
-          //MAGNET
+          const magnet = new Magnet();
+          entities.add(magnet);
         }
         
       } else {
