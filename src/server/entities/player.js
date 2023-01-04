@@ -258,6 +258,10 @@ module.exports = class Player extends SocketEntity {
       boosting: this.boosting,
       trail: this.trail.getNetworkModel(),
       nft: this.nft,
+      magnetActive: this.magnetTime > 0,
+      invulActive: this.invulTime > 0,
+      doubleActive: this.doubleTime > 0,
+      speedUpActive: this.speedUpTime > 0
     };
   }
 
@@ -270,6 +274,10 @@ module.exports = class Player extends SocketEntity {
     return Object.assign(this.getNetworkModel(), {
       score: this.score,
       gas: this.gas,
+      magnetTime: this.magnetTime,
+      invulTime: this.invulTime,
+      doubleTime: this.doubleTime,
+      speedUpTime: this.speedUpTime
     });
   }
 
