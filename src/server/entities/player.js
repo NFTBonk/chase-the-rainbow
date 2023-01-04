@@ -134,7 +134,11 @@ module.exports = class Player extends SocketEntity {
   }
 
   addScore() {
-    this.score += Constants.SCORE_ADD_INCREMENT;
+    if(this.doubleTime > 0) {
+      this.score += Constants.SCORE_ADD_INCREMENT * 2;
+    } else {
+      this.score += Constants.SCORE_ADD_INCREMENT;
+    }
     this.trail.setLength(Math.floor(this.score % 1500 * Constants.SCORE_TO_TRAIL_LENGTH_RATIO) + 1);
   }
 
