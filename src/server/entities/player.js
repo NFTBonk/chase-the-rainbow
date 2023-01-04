@@ -96,6 +96,10 @@ module.exports = class Player extends SocketEntity {
         }
       } 
 
+      if(this.doubleTime <= 0) {
+        this.radius = Constants.PLAYER_RADIUS * 2;
+      }
+
       if(this.invulTime > 0) {
         this.invulTime -= dt;
 
@@ -148,6 +152,7 @@ module.exports = class Player extends SocketEntity {
 
   activateDouble() {
     this.doubleTime = 30000;
+    this.radius = Constants.PLAYER_RADIUS * 2;
   }
 
   activateInvul() {
@@ -193,9 +198,15 @@ module.exports = class Player extends SocketEntity {
   }
 
   die() {
+    
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;
     }
+
+    if(this.invulTime > 0) {
+      return;
+    }
+
     if (!this.ai) {
       const today = new Date();
 
