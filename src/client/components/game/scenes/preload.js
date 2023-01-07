@@ -27,6 +27,7 @@ import fuelTankImage from '../../../../../public/assets/images/items/fuel.png';
 import invulImage from '../../../../../public/assets/images/items/invulnerable.png';
 import speedUpImage from '../../../../../public/assets/images/items/speedup.png';
 import doubleImage from '../../../../../public/assets/images/items/double.png';
+import magnetImage from '../../../../../public/assets/images/items/magnet.png';
 import defaultShipImage from '../../../../../public/assets/images/ships/ship1/head.png';
 import rainbowPickupAudio from '../../../../../public/assets/audio/rainbow_pickup.mp3';
 import fuelPickupAudio from '../../../../../public/assets/audio/fuel_pickup.mp3';
@@ -71,6 +72,7 @@ class Preload extends Phaser.Scene {
     this.load.image('speedUp', speedUpImage);
     this.load.image('invulnerable', invulImage);
     this.load.image('double', doubleImage);
+    this.load.image('magnet', magnetImage);
     this.load.image('bluePlanet', bluePlanet);
     this.load.image('greenPlanet', greenPlanet);
     this.load.image('cookiePlanet', cookiePlanet);
