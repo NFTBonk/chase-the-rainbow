@@ -285,7 +285,6 @@ setInterval(() => {
       entities: entitiesInRadiusNetworkModel,
       powerups: powerupEntities
     };
-
     if (player.ai) {
       player.tick(entitiesInRadiusNetworkModel);
     } else {

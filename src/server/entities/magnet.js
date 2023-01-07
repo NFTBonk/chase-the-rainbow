@@ -10,7 +10,7 @@ class Magnet extends Entity {
     super();
 
     this.id = this.generateId();
-    this.type = Constants.ENTITY_TYPE.SPEED_UPs;
+    this.type = Constants.ENTITY_TYPE.MAGNET;
     this.collectedBy = false;
 
     // magnet geometric attributes.

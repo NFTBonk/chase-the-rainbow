@@ -10,7 +10,7 @@ class Invulnerable extends Entity {
     super();
 
     this.id = this.generateId();
-    this.type = Constants.ENTITY_TYPE.SPEED_UPs;
+    this.type = Constants.ENTITY_TYPE.INVULNERABLE;
     this.collectedBy = false;
 
     // invulnerable geometric attributes.

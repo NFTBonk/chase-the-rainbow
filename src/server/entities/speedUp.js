@@ -10,7 +10,7 @@ class SpeedUp extends Entity {
     super();
 
     this.id = this.generateId();
-    this.type = Constants.ENTITY_TYPE.SPEED_UPs;
+    this.type = Constants.ENTITY_TYPE.SPEED_UP;
     this.collectedBy = false;
 
     // speedup geometric attributes.

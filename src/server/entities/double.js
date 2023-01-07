@@ -10,7 +10,7 @@ class Double extends Entity {
     super();
 
     this.id = this.generateId();
-    this.type = Constants.ENTITY_TYPE.SPEED_UPs;
+    this.type = Constants.ENTITY_TYPE.X2;
     this.collectedBy = false;
 
     // double geometric attributes.
