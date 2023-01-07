@@ -20,6 +20,7 @@ const EntitySet = require('./sets/entitySet');
 const PlayerSet = require('./sets/playerSet');
 const SpeedUp = require('./entities/speedUp');
 const Invulnerable = require('./entities/invulnerable');
+const Magnet = require('./entities/magnet');
 
 require('dotenv').config();
 require('isomorphic-fetch');
