@@ -201,7 +201,7 @@ setInterval(() => {
     for (let i = entities.size; i < Constants.MAX_ITEMS; i++) {
      
       //10% chance to generate a powerup 90% chance to generate non-powerup entities
-      if(Math.random() < 0.1) {
+      if(Math.random() < 0.033) {
         let powerupTypeRandomizer = Math.random();
         if(powerupTypeRandomizer < 0.25) {
           const speedUp = new SpeedUp();
