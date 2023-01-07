@@ -5,7 +5,7 @@ const Entity = require('./entity');
 /**
  * An object that increases a double player's size and score gain when picked up.
  */
-class Double extends Entity {
+class Doubler extends Entity {
   constructor() {
     super();
 
@@ -40,4 +40,4 @@ class Double extends Entity {
   }
 }
 
-module.exports = Double;
+module.exports = Doubler;

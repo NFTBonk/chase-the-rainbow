@@ -21,6 +21,7 @@ const PlayerSet = require('./sets/playerSet');
 const SpeedUp = require('./entities/speedUp');
 const Invulnerable = require('./entities/invulnerable');
 const Magnet = require('./entities/magnet');
+const Doubler = require('./entities/double');
 
 require('dotenv').config();
 require('isomorphic-fetch');
@@ -207,8 +208,9 @@ setInterval(() => {
           const speedUp = new SpeedUp();
           entities.add(speedUp);
         } else if (powerupTypeRandomizer >= 0.25 && powerupTypeRandomizer < 0.5) {
-          const double = new Double();
+          const double = new Doubler();
           entities.add(double);
+          console.log("double");
         } else if (powerupTypeRandomizer >= 0.5 && powerupTypeRandomizer < 0.75) {
           const invul = new Invulnerable();
           entities.add(invul);
