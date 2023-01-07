@@ -116,8 +116,6 @@ module.exports = class Player extends SocketEntity {
         }
       } 
 
-
-
       // reset trail length after 1500 points, when player increases tier
       if (this.score % 1500 === 0) {
         this.trail.setLength(1);
@@ -147,20 +145,21 @@ module.exports = class Player extends SocketEntity {
   }
 
   activateSpeedUp() {
-    this.speedUpTime = 30000;
+    this.speedUpTime = Constants.POWERUP_DURATION;
   }
 
   activateDouble() {
-    this.doubleTime = 30000;
+    console.log("activate double");
+    this.doubleTime = Constants.POWERUP_DURATION;
     this.radius = Constants.PLAYER_RADIUS * 2;
   }
 
   activateInvul() {
-    this.invulTime = 30000;
+    this.invulTime = Constants.POWERUP_DURATION;
   }
 
   activateMagnet() {
-    this.magnetTime = 30000;
+    this.magnetTime = Constants.POWERUP_DURATION;
   }
 
   setName(name) {
