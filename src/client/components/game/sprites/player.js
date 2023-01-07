@@ -16,6 +16,9 @@ export default class Player extends Phaser.GameObjects.Container {
     this.nft = nft;
 
     this.realScaleX = 1;
+    this.realScaleY = 1;
+
+    this.scaleMultiplier = 1;
 
     // Used to make the trail "follow" the player ship.
     this.lastTrailReset = 0;
@@ -31,6 +34,11 @@ export default class Player extends Phaser.GameObjects.Container {
     this.score = 0;
     this.nameTag = this.scene.add.text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: '40px' }).setDepth(100);
 
+    // this.isMagnetActive = false;
+    // this.isDoubleActive = false;
+    // this.isInvulActive = false;
+    // this.isSpeedUpActive = false;
+
     if (this.nft !== 'default' && this.nft) {
       const loader = new Phaser.Loader.LoaderPlugin(this.scene);
       // ask the LoaderPlugin to load the texture
@@ -44,7 +52,7 @@ export default class Player extends Phaser.GameObjects.Container {
         if (this.scene.textures.exists(`nft${nft.join()}`)) {
           this.shipSprite.setTexture(`nft${nft.join()}`);
           this.realScaleX = this.nft[0].trim() === 'Space Doodle' ? 0.4 : 0.15;
-          this.scaleY = this.nft[0].trim() === 'Space Doodle' ? 0.4 : 0.15;
+          this.realScaleY = this.nft[0].trim() === 'Space Doodle' ? 0.4 : 0.15;
         }
       });
       loader.start();
@@ -54,6 +62,9 @@ export default class Player extends Phaser.GameObjects.Container {
     if(this.nameTag) this.nameTag.setAlpha(0);
     if(this.trailMesh) this.trailMesh.setAlpha(0);
     if(this.shipSprite) this.shipSprite.setAlpha(0);
+
+    this.hsv = Phaser.Display.Color.HSVColorWheel();
+    this.i = 0;
   }
 
   destroy() {
@@ -159,10 +170,12 @@ export default class Player extends Phaser.GameObjects.Container {
       ), interpFactor);
       let interpAngle = d2r(aLerp(r2d(previousTimestampFrame.frame.angle), r2d(nextTimestampFrame.frame.angle), interpFactor));
       if (interpAngle > Math.PI / 2 || interpAngle < -Math.PI / 2) {
-        this.shipSprite.scaleX = -1 * this.realScaleX;
+        this.shipSprite.scaleX = -1 * this.realScaleX * this.scaleMultiplier;
+        this.shipSprite.scaleY = this.realScaleY * this.scaleMultiplier;
         interpAngle += Math.PI;
       } else {
-        this.shipSprite.scaleX = 1 * this.realScaleX;
+        this.shipSprite.scaleX = 1 * this.realScaleX * this.scaleMultiplier;
+        this.shipSprite.scaleY = this.realScaleY * this.scaleMultiplier;
       }
       this.setPosition(interpPosition.x, interpPosition.y);
       this.setAngle((interpAngle / Math.PI) * 180);
@@ -212,6 +225,24 @@ export default class Player extends Phaser.GameObjects.Container {
         eventCenter.emit('playerScore', nextTimestampFrame.frame.score);
       }
       this.score = nextTimestampFrame.frame.score;
+
+      let top = this.hsv[Math.floor(Math.random() * 359)].color;
+      let left = this.hsv[Math.floor(Math.random() * 359)].color;
+      let right = this.hsv[Math.floor(Math.random() * 359)].color;
+      let bottom = this.hsv[Math.floor(Math.random() * 359)].color;
+      if(this.shipSprite) {
+        if(nextTimestampFrame.frame.invulActive) {
+          this.shipSprite.setTint(top, left, right, bottom);
+        } else {
+          this.shipSprite.clearTint();
+        }
+
+        if(nextTimestampFrame.frame.doubleActive) {
+          this.scaleMultiplier = 2;
+        } else {
+          this.scaleMultiplier = 1;
+        }
+      }
     }
 
     // if (this.isLocalPlayer && this.visible == true) {
@@ -225,10 +256,11 @@ export default class Player extends Phaser.GameObjects.Container {
       this.drawTrailPoly(20, 0xf9aaca);
     }
 
+
     if (nextTimestampFrame && nextTimestampFrame.frame.boosting) {
       this.shipSprite.setY(Math.sin(time / 70) * 10 - 10);
     } else {
-      this.shipSprite.setY(Math.sin(time / 100) * 10 - 10);
+      this.shipSprite.setY(Math.  sin(time / 100) * 10 - 10);
     }
   }
 

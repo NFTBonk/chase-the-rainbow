@@ -189,7 +189,7 @@ export default class MainMap extends Phaser.Scene {
     const entityMap = new Map();
 
     this.socket.on('frame', (frame) => {
-      console.log(frame);
+      console.log(frame.powerups);
       this.localPlayerSprite.pushFrame(frame.localPlayer);
 
       const newPlayerIds = new Set();
@@ -218,7 +218,6 @@ export default class MainMap extends Phaser.Scene {
         }
       });
 
-      console.log(frame.powerups);
       this[_powerUps] = frame.powerups;
 
       frame.entities.forEach((entity) => {
