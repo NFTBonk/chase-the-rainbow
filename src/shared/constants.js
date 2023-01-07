@@ -16,7 +16,7 @@ module.exports = Object.freeze({
     FUEL_TANK: 'fuelTank',
     DEBUG_CIRCLE: 'debugCircle',
     SPEED_UP: 'speedUp',
-    X2: 'x2',
+    X2: 'double',
     INVULNERABLE: 'invulnerable',
     MAGNET: 'magnet'
   },
