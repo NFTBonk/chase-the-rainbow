@@ -8,8 +8,9 @@ import Player from '../sprites/player';
 import DeathScreen from '../../deathScreen/index';
 
 
-//Private Reference for PlayerMap
+//Private Reference for PlayerMap and Powerups
 const _playerMap = Symbol("PlayerMap");
+const _powerUps = Symbol("Powerups");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -215,6 +216,8 @@ export default class MainMap extends Phaser.Scene {
         }
       });
 
+      this[_powerUps] = frame.powerups;
+
       frame.entities.forEach((entity) => {
         newEntityIds.add(entity.id);
         if (!entityIds.has(entity.id)) {
@@ -314,7 +317,7 @@ export default class MainMap extends Phaser.Scene {
       this.spaceKeyPressed = false;
     }
     
-    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap]});
+    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps]});
     
     if (spacebar !== this.spaceKeyPressed) {
       eventCenter.emit('spacebar', this.spaceKeyPressed);
