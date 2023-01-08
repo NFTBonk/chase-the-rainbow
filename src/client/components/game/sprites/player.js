@@ -250,10 +250,18 @@ export default class Player extends Phaser.GameObjects.Container {
     // }
 
     this.trailMesh.clear();
-    if (this.trailPoints.length > 0) {
-      this.drawTrailPoly(-20, 0xfce484);
-      this.drawTrailPoly(0, 0x84dccc);
-      this.drawTrailPoly(20, 0xf9aaca);
+    if(nextTimestampFrame && nextTimestampFrame.frame.speedUpActive) {
+      if (this.trailPoints.length > 0) {
+        this.drawTrailPoly(-20, 0x3d88ff);
+        this.drawTrailPoly(0, 0x56b6ff);
+        this.drawTrailPoly(20, 0x5ad6ff);
+      }
+    } else {
+      if (this.trailPoints.length > 0) {
+        this.drawTrailPoly(-20, 0xfce484);
+        this.drawTrailPoly(0, 0x84dccc);
+        this.drawTrailPoly(20, 0xf9aaca);
+      }
     }
 
 
