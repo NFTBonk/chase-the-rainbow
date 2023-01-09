@@ -24,6 +24,12 @@ export default class Player extends Phaser.GameObjects.Container {
     this.lastTrailReset = 0;
     this.lastTrail = new Phaser.Math.Vector2(0, 0);
 
+    this.magnetFX = this.scene.add.sprite(0, 0, 'magnetFX_1');
+    this.magnetFX.setAlpha(0.3);
+    this.magnetFX.play('magnetFX');
+    this.magnetFX.setVisible(false);
+    this.add(this.magnetFX);
+
     // TODO: Load the nfts
     this.shipSprite = this.scene.add.sprite(0, 0, 'defaultShip');
 
@@ -243,6 +249,8 @@ export default class Player extends Phaser.GameObjects.Container {
           this.scaleMultiplier = 1;
         }
       }
+
+      this.magnetFX.setVisible(nextTimestampFrame.frame.magnetActive)
     }
 
     // if (this.isLocalPlayer && this.visible == true) {

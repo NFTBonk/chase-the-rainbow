@@ -32,6 +32,10 @@ import defaultShipImage from '../../../../../public/assets/images/ships/ship1/he
 import rainbowPickupAudio from '../../../../../public/assets/audio/rainbow_pickup.mp3';
 import fuelPickupAudio from '../../../../../public/assets/audio/fuel_pickup.mp3';
 import defaultTrailImage from '../../../../../public/assets/images/ships/trail.png';
+import magnetFX_1 from '../../../../../public/assets/images/ships/ship1/magnetfx_1.png';
+import magnetFX_2 from '../../../../../public/assets/images/ships/ship1/magnetfx_2.png';
+import magnetFX_3 from '../../../../../public/assets/images/ships/ship1/magnetfx_3.png';
+import magnetFX_4 from '../../../../../public/assets/images/ships/ship1/magnetfx_4.png';
 class Preload extends Phaser.Scene {
   constructor() {
     super('preload');
@@ -73,6 +77,10 @@ class Preload extends Phaser.Scene {
     this.load.image('invulnerable', invulImage);
     this.load.image('double', doubleImage);
     this.load.image('magnet', magnetImage);
+    this.load.image('magnetFX_1', magnetFX_1);
+    this.load.image('magnetFX_2', magnetFX_2);
+    this.load.image('magnetFX_3', magnetFX_3);
+    this.load.image('magnetFX_4', magnetFX_4);
     this.load.image('bluePlanet', bluePlanet);
     this.load.image('greenPlanet', greenPlanet);
     this.load.image('cookiePlanet', cookiePlanet);

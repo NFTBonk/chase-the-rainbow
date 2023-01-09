@@ -91,6 +91,17 @@ export default class MainMap extends Phaser.Scene {
       transports: ['websocket'],
     });
 
+    this.anims.create({
+      key: 'magnetFX',
+      frames: [
+        {key: 'magnetFX_1', duration: 100}, 
+        {key: 'magnetFX_2', duration: 100}, 
+        {key: 'magnetFX_3', duration: 100}, 
+        {key: 'magnetFX_4', duration: 100}, 
+      ],
+      repeat: -1,
+    })
+
     this.moon = this.add.image(8314, 16415, 'moon').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
     this.bluePlanet = this.add.image(6289, 14146, 'doodliftsplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
     this.greenPlanet = this.add.image(12038, 9734, 'finnsplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
