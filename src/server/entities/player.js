@@ -33,17 +33,14 @@ module.exports = class Player extends SocketEntity {
     this.speed = 0.5;
     this.tourneyCode = '';
     this.walletaddy = '';
-<<<<<<< HEAD
     this.speedUpTime = 0;
     this.doubleTime = 0;
     this.magnetTime = 0;
     this.invulTime = 0;
-=======
     this.isTournament = 0;
     this.isWinner = false;
     this.kills = 0;
     this.killer = '';
->>>>>>> main
 
     // Player inputs to process, updated as the player sends new packets.
     this.inputAngle = 0;
@@ -211,25 +208,16 @@ module.exports = class Player extends SocketEntity {
     this.trail.resetPosition(this.x, this.y);
   }
 
-<<<<<<< HEAD
-  die() {
-    
-=======
   die(killer) {
->>>>>>> main
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;
     }
 
-<<<<<<< HEAD
     if(this.invulTime > 0) {
       return;
     }
 
-    if (!this.ai) {
-=======
     if (!this.ai && (this.isTournament == 0 || this.isWinner)) {
->>>>>>> main
       const today = new Date();
 
       //ADD TOTAL DEATH COUNT
@@ -308,14 +296,11 @@ module.exports = class Player extends SocketEntity {
     return Object.assign(this.getNetworkModel(), {
       score: this.score,
       gas: this.gas,
-<<<<<<< HEAD
       magnetTime: this.magnetTime,
       invulTime: this.invulTime,
       doubleTime: this.doubleTime,
-      speedUpTime: this.speedUpTime
-=======
+      speedUpTime: this.speedUpTime,
       kills: this.kills
->>>>>>> main
     });
   }
 
