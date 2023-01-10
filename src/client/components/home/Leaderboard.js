@@ -35,7 +35,7 @@ const NoodleImg = styled.img`
 
 const LeaderboardContainer = styled.div`
   ${defaultContainerMargins}
-  display: flex;
+  display: flex wrap;
   flex-direction: column;
   align-items: center;
   gap: 20px;
@@ -94,6 +94,13 @@ const LeaderboardRow = styled.div`
   & + & {
     margin-top: 16px;
   }
+`;
+
+const LeaderboardSection = styled.div`
+  flex: 1 0 auto;
+  display: flex;
+  width: 100%;
+  margin-bottom: 50px
 `;
 
 const LeaderboardImage = styled.img`
@@ -172,6 +179,7 @@ function Leaderboard() {
         <PlanetImg src={Planet} alt="planet" />
         <NoodleImg src={Noodle1} alt="planet" />
 
+        <LeaderboardSection>
         <LeaderboardPanel>
           <H1>Global </H1> <h4>Leaderboard</h4>
           {rankings?.global?.map((social,index) => (
@@ -209,6 +217,46 @@ function Leaderboard() {
             </LeaderboardRow>
           ))}
         </LeaderboardPanel>
+        </LeaderboardSection>
+
+        <LeaderboardSection>
+        <LeaderboardPanel>
+          <H1>Global Kill</H1> <h4>Leaderboard</h4>
+          {rankings?.globalKill?.map((social,index) => (
+            <LeaderboardRow key={index}>
+              <LeaderboardText>
+                {`${social.name}`}
+              </LeaderboardText>
+                <a href = {social.doodId.split(' ')[social.doodId.split(' ').length-2] === 'Doodle' ? `https://opensea.io/assets/ethereum/0x620b70123fb810f6c653da7644b5dd0b6312e4d8/${social.doodId.split('#')[social.doodId.split('#').length-1]}` : `https://opensea.io/assets/ethereum/0x8153f4b100def4b1480b18dd159e64e68f1ad4c7/${social.doodId.split('#')[social.doodId.split('#').length-1]}`} target="_blank">
+                  <LeaderboardText>
+                    {`${social.doodId.split(' ')[social.doodId.split(' ').length-2] + ' ' + social.doodId.split(' ')[social.doodId.split(' ').length-1]}`}
+                  </LeaderboardText>
+                </a>
+              <LeaderboardText>
+                {`${social.kills}`}
+              </LeaderboardText>
+            </LeaderboardRow>
+          ))}
+        </LeaderboardPanel>
+        <LeaderboardPanel>
+          <H1>Weekly Kill</H1> <h4>Leaderboard</h4>
+          {rankings?.weeklyKill?.map((social,index) => (
+            <LeaderboardRow key={index}>
+              <LeaderboardText>
+                {`${social.name}`}
+              </LeaderboardText>
+                <a href = {social.doodId.split(' ')[social.doodId.split(' ').length-2] === 'Doodle' ? `https://opensea.io/assets/ethereum/0x620b70123fb810f6c653da7644b5dd0b6312e4d8/${social.doodId.split('#')[social.doodId.split('#').length-1]}` : `https://opensea.io/assets/ethereum/0x8153f4b100def4b1480b18dd159e64e68f1ad4c7/${social.doodId.split('#')[social.doodId.split('#').length-1]}`} target="_blank">
+                  <LeaderboardText>
+                    {`${social.doodId.split(' ')[social.doodId.split(' ').length-2] + ' ' + social.doodId.split(' ')[social.doodId.split(' ').length-1]}`}
+                  </LeaderboardText>
+                </a>
+              <LeaderboardText>
+                {`${social.kills}`}
+              </LeaderboardText>
+            </LeaderboardRow>
+          ))}
+        </LeaderboardPanel>
+        </LeaderboardSection>
       </LeaderboardContainer>
       <MissionStatement>
         <MissionStatementSummary>

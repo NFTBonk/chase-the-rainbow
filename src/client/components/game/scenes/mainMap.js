@@ -10,6 +10,9 @@ import DeathScreen from '../../deathScreen/index';
 
 //Private Reference for PlayerMap and Powerups
 const _playerMap = Symbol("PlayerMap");
+const _serverType = Symbol("ServerType");
+const _timeLeft = Symbol("timeLeft");
+const _isWinner = Symbol("isWinner");
 const _powerUps = Symbol("Powerups");
 // eslint-disable-next-line no-unused-vars
 
@@ -78,7 +81,6 @@ export default class MainMap extends Phaser.Scene {
   }
 
   handleBoostButton(isBoostDown) {
-    console.log(isBoostDown);
     this.isBoostButtonPressed = isBoostDown;
   }
 
@@ -137,7 +139,11 @@ export default class MainMap extends Phaser.Scene {
       this.respawnButton.style.display = 'none';
     });
 
-    this.localPlayerSprite.on('death', () => {
+    this.localPlayerSprite.on('death', (data) => {
+      //TODO UPDATE TEXT DEPENDING ON TOURNAMENT TYPE
+      if(this[_isWinner]) {
+        this.respawnButton.contentWindow.document.getElementById('title').innerHTML = `YOU WON!`;
+      }
       this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Score: ${this.localPlayerSprite.score}`;
       this.respawnButton.contentWindow.document.getElementById('again').onclick = () => {
         this.socket.emit('forcedDisconnect');
@@ -179,6 +185,27 @@ export default class MainMap extends Phaser.Scene {
       console.log('connected!!');
     });
 
+    this.socket.on('setup', (data) => {
+      this[_serverType] = data.serverType;
+      if(!data.isActive) {
+        this.respawnButton.contentWindow.document.getElementById('title').innerHTML = `TOURNAMENT CLOSED`;
+        this.respawnButton.contentWindow.document.getElementById('score').innerHTML = `Next Tournament Starts at ` + data.next;
+        this.respawnButton.contentWindow.document.getElementById('again').innerHTML = `Change Server`;
+        document.body.style.overflow = 'hidden';
+        this.respawnButton.style.display = 'block';
+        this.respawnButton.contentWindow.document.getElementById('again').onclick = () => {
+          this.socket.emit('forcedDisconnect');
+          window.location.replace(this.prodMode ? 'https://www.chasetherainbow.app/pilots' : 'http://localhost:3000/pilots');
+          clearTimeout(this.AFKKick);
+        };
+        this.respawnButton.contentWindow.document.getElementById('titleMenu').onclick = () => {
+          this.socket.emit('forcedDisconnect');
+          window.location.replace(this.prodMode ? 'https://www.chasetherainbow.app' : 'http://localhost:3000');
+          clearTimeout(this.AFKKick);
+        };
+      } 
+    })
+
     this.socket.on('loggedIn', () => {
       this.loggedIn = true;
     });
@@ -187,6 +214,11 @@ export default class MainMap extends Phaser.Scene {
       if (!this.loggedIn) return;
       eventCenter.emit('lb', data);
     });
+
+    this.socket.on('death', (data) => {
+      console.log(data);
+      eventCenter.emit('killNotif', data);
+    })
     // Create key listener and check if player is boosting
     this.cursors = this.input.keyboard.createCursorKeys();
     this.spaceKeyPressed = false;
@@ -198,11 +230,13 @@ export default class MainMap extends Phaser.Scene {
     this[_powerUps] = [];
     const entityIds = new Set();
     const entityMap = new Map();
+    this[_isWinner] = false;
 
     this.socket.on('frame', (frame) => {
       console.log(frame.powerups);
       this.localPlayerSprite.pushFrame(frame.localPlayer);
-
+      this[_timeLeft] = frame.timeLeft;
+      this[_isWinner] = frame.isWinner;
       const newPlayerIds = new Set();
       const newEntityIds = new Set();
 
@@ -255,7 +289,7 @@ export default class MainMap extends Phaser.Scene {
           // get entity
           const entityToUpdate = entityMap.get(entity.id);
           const entityArray = Array.from(entityMap.values());
-          console.log(entityArray.filter((e) => e.x === entityToUpdate.x && e.y === entityToUpdate.y).length);
+          // console.log(entityArray.filter((e) => e.x === entityToUpdate.x && e.y === entityToUpdate.y).length);
           this.tweens.addCounter({
             from: 0,
             to: 1,
@@ -331,6 +365,9 @@ export default class MainMap extends Phaser.Scene {
     }
     
     eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps]});
+    if(this[_serverType] == 'Tournament') {
+      eventCenter.emit("countdown", this[_timeLeft]);
+    }
     
     if (spacebar !== this.spaceKeyPressed) {
       eventCenter.emit('spacebar', this.spaceKeyPressed);

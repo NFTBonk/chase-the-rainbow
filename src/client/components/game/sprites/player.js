@@ -38,6 +38,7 @@ export default class Player extends Phaser.GameObjects.Container {
 
     this.isLocalPlayer = isLocalPlayer;
     this.score = 0;
+    this.kills = 0;
     this.nameTag = this.scene.add.text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: '40px' }).setDepth(100);
 
     // this.isMagnetActive = false;
@@ -116,6 +117,7 @@ export default class Player extends Phaser.GameObjects.Container {
     }
     if (prevFrame.state !== Constants.PLAYER_STATE.DEAD
       && nextFrame.state === Constants.PLAYER_STATE.DEAD) {
+        this.killer = nextFrame.killer;
       this.onDeath();
     }
   }
@@ -235,6 +237,7 @@ export default class Player extends Phaser.GameObjects.Container {
           magnetTimer: nextTimestampFrame.frame.magnetTime,
           speedUpTimer: nextTimestampFrame.frame.speedUpTime
         });
+        eventCenter.emit('killCount', nextTimestampFrame.frame.kills);
       }
       this.score = nextTimestampFrame.frame.score;
 
@@ -257,6 +260,7 @@ export default class Player extends Phaser.GameObjects.Container {
       }
 
       this.magnetFX.setVisible(nextTimestampFrame.frame.magnetActive)
+      this.kills = nextTimestampFrame.frame.kills;
     }
 
     // if (this.isLocalPlayer && this.visible == true) {

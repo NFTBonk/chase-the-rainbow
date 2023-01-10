@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import FuelBar from '../sprites/fuelbar';
+import KillNotif from '../sprites/killNotif';
 import Leaderboard from '../sprites/leaderboard';
 import Minimap from '../sprites/minimap';
 import PowerupHUD from '../sprites/powerupHUD';
@@ -32,6 +33,8 @@ class Ui extends Phaser.Scene {
     this.createControlInfo();
     this.createMinimap();
     this.createPowerupHUD();
+    this.createKillCount();
+    this.createTimer();
     if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
       this.createJoystick();
       this.createBoostButton();
@@ -42,6 +45,7 @@ class Ui extends Phaser.Scene {
     this.previousFuel = 1; // full tank
 
     this.lb = new Leaderboard(this, this.scale.baseSize.width * (1 - this.cullFactorWidth / 2) - MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP);
+    this.killNotif = new KillNotif(this, this.scale.baseSize.width * 0.5, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3);
 
     eventCenter.on('playerScore', this.updateScore, this); // listen for score updates
     eventCenter.on('playerFuel', this.updateFuelBar, this); // listen for fuel updates
@@ -49,6 +53,9 @@ class Ui extends Phaser.Scene {
     eventCenter.on('lb', this.lb.updateLeaderboard, this.lb); // listen for leaderboard updates
     eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
     eventCenter.on('powerups', this.powerupHUD.updatePowerupTimes, this.powerupHUD); //listen for powerup updates
+    eventCenter.on('countdown', this.updateTimer, this); //listen for timer updates
+    eventCenter.on('killCount', this.updateKillCount, this); //listen for timer updates
+    eventCenter.on('killNotif', this.killNotif.addToQueue, this.killNotif); //listen for timer updates
 
     this.scale.on('resize', (gameSize, baseSize, displaySize, previousWidth, previousHeight) => {
       let cullFactorHeight = (displaySize.height - displaySize._parent.height ) / displaySize.height;
@@ -58,10 +65,14 @@ class Ui extends Phaser.Scene {
       this.powerupHUD.setPosition(baseSize.width * 0.5, baseSize.height * (1 - cullFactorHeight / 2) - 150);
       this.minimapMask.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
       this.scoreGroup.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
+      this.timer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 6);
+      this.killIcon.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 3);
+      this.killCount.setPosition(this.killIcon.x + this.killIcon.width, this.killIcon.y + this.killIcon.height * 0.5);
       this.fuelContainer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP - 20);
       this.fillMask.setPosition(this.fuelContainer.x + this.fuel.width * 0.5 - 15, this.fuelContainer.y + this.fuel.y - 200);
       this.controlInfo.setPosition(MARGIN_LEFT + this.fuel.width + this.fuelContainer.x, this.fuelContainer.y);
       this.lb.setPosition(baseSize.width * (1 - cullFactorWidth / 2) - MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
+      this.killNotif.setPosition(baseSize.width * 0.5, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 3);
       this.joyStick.setPosition(baseSize.width * cullFactorWidth / 2 + 275, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP -  200,)
       if(displaySize._parent.height > displaySize._parent.width) {
         this.scene.launch("rotate");
@@ -120,6 +131,28 @@ class Ui extends Phaser.Scene {
     this.score.setScrollFactor(0);
   }
 
+  createTimer() {
+    this.timer = this.add.text(
+      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 6, "", 
+      {
+        fontFamily: 'Pangolin',
+        fontSize: SCORE_FONT_SIZE
+      }
+    ).setDepth(100);
+  }
+
+  createKillCount() {
+    this.killIcon = this.add.image(this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 3, "killIcon").setOrigin(0);
+    this.killCount = this.add.text(
+      this.killIcon.x + this.killIcon.width, this.killIcon.y + this.killIcon.height * 0.5, ": 0", 
+      {
+        fontFamily: 'Pangolin',
+        fontSize: SCORE_FONT_SIZE
+      }
+    ).setDepth(100);
+    this.killCount.setOrigin(0, 0.5);
+  }
+
   createFuel() {
     this.fuelContainer = this.add.container(this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (1 - this.cullFactorHeight / 2) - MARGIN_TOP- 20);
     this.fuel = this.add
@@ -149,6 +182,21 @@ class Ui extends Phaser.Scene {
     this.previousScore = currentScore;
   }
 
+  pad2Digits(num) {
+    return String(num).padStart(2, '0');
+  }
+
+  updateTimer(timeLeft) { 
+    if(timeLeft > 0) {
+      this.timer.setText(this.pad2Digits(Math.floor(timeLeft / 60)) + ":" + this.pad2Digits(Math.floor(timeLeft % 60)));
+    }
+  }
+
+  updateKillCount(count) { 
+    this.killCount.setText(": " + count.toLocaleString());
+  }
+
+
   createControlInfo() {
     this.controlInfo = this.add
       .text(
@@ -160,7 +208,9 @@ class Ui extends Phaser.Scene {
         },
       )
       .setDepth(100);
-    this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
+    if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
+     this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
+    }
     this.controlInfo.setScrollFactor(0);
   }
 
