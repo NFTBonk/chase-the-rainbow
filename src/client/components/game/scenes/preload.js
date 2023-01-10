@@ -28,14 +28,20 @@ import invulImage from '../../../../../public/assets/images/items/invulnerable.p
 import speedUpImage from '../../../../../public/assets/images/items/speedup.png';
 import doubleImage from '../../../../../public/assets/images/items/double.png';
 import magnetImage from '../../../../../public/assets/images/items/magnet.png';
+import invulIconImage from '../../../../../public/assets/images/items/invulnerable_icon.png';
+import speedUpIconImage from '../../../../../public/assets/images/items/speed_up_icon.png';
+import doubleIconImage from '../../../../../public/assets/images/items/double_icon.png';
+import magnetIconImage from '../../../../../public/assets/images/items/magnet_icon.png';
 import defaultShipImage from '../../../../../public/assets/images/ships/ship1/head.png';
 import rainbowPickupAudio from '../../../../../public/assets/audio/rainbow_pickup.mp3';
 import fuelPickupAudio from '../../../../../public/assets/audio/fuel_pickup.mp3';
+import powerupAudio from '../../../../../public/assets/audio/powerup.mp3';
 import defaultTrailImage from '../../../../../public/assets/images/ships/trail.png';
 import magnetFX_1 from '../../../../../public/assets/images/ships/ship1/magnetfx_1.png';
 import magnetFX_2 from '../../../../../public/assets/images/ships/ship1/magnetfx_2.png';
 import magnetFX_3 from '../../../../../public/assets/images/ships/ship1/magnetfx_3.png';
 import magnetFX_4 from '../../../../../public/assets/images/ships/ship1/magnetfx_4.png';
+
 class Preload extends Phaser.Scene {
   constructor() {
     super('preload');
@@ -77,6 +83,10 @@ class Preload extends Phaser.Scene {
     this.load.image('invulnerable', invulImage);
     this.load.image('double', doubleImage);
     this.load.image('magnet', magnetImage);
+    this.load.image('speedup_icon', speedUpIconImage);
+    this.load.image('invulnerable_icon', invulIconImage);
+    this.load.image('double_icon', doubleIconImage);
+    this.load.image('magnet_icon', magnetIconImage);
     this.load.image('magnetFX_1', magnetFX_1);
     this.load.image('magnetFX_2', magnetFX_2);
     this.load.image('magnetFX_3', magnetFX_3);
@@ -107,6 +117,7 @@ class Preload extends Phaser.Scene {
     // Audio
     this.load.audio('rainbowPickup', rainbowPickupAudio);
     this.load.audio('fuelPickup', fuelPickupAudio);
+    this.load.audio('powerupPickup', powerupAudio);
 
     //Load virtual joystick
     this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true);
