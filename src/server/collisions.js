@@ -27,8 +27,12 @@ function applyCollisions(player, localEntities, globalEntities) {
          entity.type === constants.ENTITY_TYPE.INVULNERABLE ||
          entity.type === constants.ENTITY_TYPE.MAGNET ||
          entity.type === constants.ENTITY_TYPE.X2 ||
-         entity.type === constants.ENTITY_TYPE.SPEED_UP) entityRadius *= 2;
-      if(player.magnetTime > 0) entityRadius *= 4;
+         entity.type === constants.ENTITY_TYPE.SPEED_UP) {
+          if(player.magnetTime > 0) 
+            entityRadius *= 8;
+          else 
+            entityRadius *= 2;
+         }
       const circle = new Circle({ x: entity.x, y: entity.y }, player.radius + entityRadius);
       circle.entity = entity;
       system.insert(circle);
