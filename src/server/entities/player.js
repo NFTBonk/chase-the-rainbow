@@ -28,8 +28,8 @@ module.exports = class Player extends SocketEntity {
     this.name = 'Player';
     this.score = 0;
     this.level = 0;
-    this.expRequired = 1;
-    this.previousExpRequired = 1;
+    this.expRequired = 0;
+    this.previousExpRequired = 0;
     this.gas = Constants.GAS_INIT;
     this.gasMax = Constants.GAS_MAX_DEFAULT;
     this.boosting = false;
@@ -150,7 +150,7 @@ module.exports = class Player extends SocketEntity {
     }
 
 
-    this.trail.setLength(Math.floor(Math.min(this.score % this.previousExpRequired * Constants.SCORE_TO_TRAIL_LENGTH_RATIO, 50)));
+    this.trail.setLength(Math.floor(Math.min((this.score - this.previousExpRequired) * Constants.SCORE_TO_TRAIL_LENGTH_RATIO, 50)));
   }
 
   activateSpeedUp() {
