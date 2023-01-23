@@ -35,6 +35,7 @@ class Ui extends Phaser.Scene {
     this.createPowerupHUD();
     this.createKillCount();
     this.createTimer();
+    this.createLevelPrompt();
     if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
       this.createJoystick();
       this.createBoostButton();
@@ -56,6 +57,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('countdown', this.updateTimer, this); //listen for timer updates
     eventCenter.on('killCount', this.updateKillCount, this); //listen for timer updates
     eventCenter.on('killNotif', this.killNotif.addToQueue, this.killNotif); //listen for timer updates
+    eventCenter.on('levelup', this.showLevelupPrompt, this); //listen for timer updates
 
     this.scale.on('resize', (gameSize, baseSize, displaySize, previousWidth, previousHeight) => {
       let cullFactorHeight = (displaySize.height - displaySize._parent.height ) / displaySize.height;
@@ -151,6 +153,34 @@ class Ui extends Phaser.Scene {
       }
     ).setDepth(100);
     this.killCount.setOrigin(0, 0.5);
+  }
+
+  createLevelPrompt() {
+    this.levelupTxt = this.add.text(
+      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 4, "Level UP!", 
+      {
+        fontFamily: 'Pangolin',
+        fontSize: SCORE_FONT_SIZE
+      }
+    ).setDepth(100);
+    this.levelupTxt.setVisible(false);
+
+    this.levelUPTL =  scene.tweens.createTimeline();
+    this.animationTL.add({
+      targets: this.levelupTxt,
+      duration: 500,
+      alpha: 1,
+    });
+    this.animationTL.add({
+      targets: this.levelupTxt,
+      duration: 500,
+      alpha: 0,
+      offset: "+=1000"
+    });
+  }
+
+  showLevelupPrompt() {
+    this.levelUPTL.play();
   }
 
   createFuel() {
