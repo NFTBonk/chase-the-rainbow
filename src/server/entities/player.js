@@ -28,6 +28,8 @@ module.exports = class Player extends SocketEntity {
     this.name = 'Player';
     this.score = 0;
     this.level = 0;
+    this.expRequired = 0;
+    this.previousExpRequired = 0;
     this.gas = Constants.GAS_INIT;
     this.gasMax = Constants.GAS_MAX_DEFAULT;
     this.boosting = false;
@@ -98,12 +100,9 @@ module.exports = class Player extends SocketEntity {
 
         if(this.doubleTime < 0) {
           this.doubleTime = 0;
+          this.radius = Constants.PLAYER_RADIUS;
         }
       } 
-
-      if(this.doubleTime <= 0) {
-        this.radius = Constants.PLAYER_RADIUS * 2;
-      }
 
       if(this.invulTime > 0) {
         this.invulTime -= dt;
@@ -122,9 +121,11 @@ module.exports = class Player extends SocketEntity {
       } 
 
       // reset trail length after 1500 points, when player increases tier
-      if (this.score > Math.pow(this.level / Constants.PROGRESSION_DIVISOR, Constants.PROGRESSION_EXPONENT)) {
+      if (this.score > this.expRequired) {
         this.trail.setLength(1);
+        this.previousExpRequired = this.expRequired
         this.level++;
+        this.expRequired = Math.pow(this.level / Constants.PROGRESSION_DIVISOR, Constants.PROGRESSION_EXPONENT);
       }
     }
   }
@@ -147,7 +148,9 @@ module.exports = class Player extends SocketEntity {
     } else {
       this.score += Constants.SCORE_ADD_INCREMENT;
     }
-    this.trail.setLength(Math.floor(Math.min((this.score - Math.pow(Math.max(0, this.level - 1) / Constants.PROGRESSION_DIVISOR, Constants.PROGRESSION_EXPONENT)) * Constants.SCORE_TO_TRAIL_LENGTH_RATIO, 50)));
+
+
+    this.trail.setLength(Math.floor(Math.min(this.score % this.previousExpRequired * Constants.SCORE_TO_TRAIL_LENGTH_RATIO, 50)));
   }
 
   activateSpeedUp() {
