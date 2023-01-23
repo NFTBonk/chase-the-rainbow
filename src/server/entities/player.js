@@ -155,7 +155,6 @@ module.exports = class Player extends SocketEntity {
   }
 
   activateDouble() {
-    console.log("activate double");
     this.doubleTime = Constants.POWERUP_DURATION;
     this.radius = Constants.PLAYER_RADIUS * 2;
   }
