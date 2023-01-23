@@ -27,7 +27,6 @@ export default class PowerupHUD extends Phaser.GameObjects.Container {
     }
 
     updatePowerupTimes(powerupTimer) {
-        console.log(powerupTimer);
         this.speedUp.updatePowerupTime(powerupTimer.speedUpTimer);
         this.magnet.updatePowerupTime(powerupTimer.magnetTimer);
         this.invul.updatePowerupTime(powerupTimer.invulTimer);
