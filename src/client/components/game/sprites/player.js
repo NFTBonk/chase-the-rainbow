@@ -39,6 +39,7 @@ export default class Player extends Phaser.GameObjects.Container {
     this.isLocalPlayer = isLocalPlayer;
     this.score = 0;
     this.kills = 0;
+    this.name = '';
     this.nameTag = this.scene.add.text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: '40px' }).setDepth(100);
 
     this.level = 0;
@@ -130,7 +131,8 @@ export default class Player extends Phaser.GameObjects.Container {
     if (this.frameHistory.length > FRAME_HISTORY_MAX) {
       this.frameHistory.shift();
     }
-    this.nameTag.setText(frame.name);
+    this.name = frame.name;
+    this.nameTag.setText(this.name + ' (Lv. ' + this.level + ')');
 
     // Events are not sent from the server to the client, instead the client
     // will try to infer events from state changes.
@@ -195,25 +197,25 @@ export default class Player extends Phaser.GameObjects.Container {
       else this.nameTag.visible = true;
 
       // nametag color change based on score
-      const scoreTier = {
-        silver: [1500, '#C0C0C0'],
-        gold: [3000, '#ffd700'],
-        platinum: [4500, '#7FFFD4'],
-        diamond: [6000, '#b9f2ff'],
-      };
+      // const scoreTier = {
+      //   silver: [1500, '#C0C0C0'],
+      //   gold: [3000, '#ffd700'],
+      //   platinum: [4500, '#7FFFD4'],
+      //   diamond: [6000, '#b9f2ff'],
+      // };
 
-      if (this.score >= scoreTier.silver[0]) {
-        this.nameTag.setColor(scoreTier.silver[1]);
-      }
-      if (this.score >= scoreTier.gold[0]) {
-        this.nameTag.setColor(scoreTier.gold[1]);
-      }
-      if (this.score >= scoreTier.platinum[0]) {
-        this.nameTag.setColor(scoreTier.platinum[1]);
-      }
-      if (this.score >= scoreTier.diamond[0]) {
-        this.nameTag.setColor(scoreTier.diamond[1]);
-      }
+      // if (this.score >= scoreTier.silver[0]) {
+      //   this.nameTag.setColor(scoreTier.silver[1]);
+      // }
+      // if (this.score >= scoreTier.gold[0]) {
+      //   this.nameTag.setColor(scoreTier.gold[1]);
+      // }
+      // if (this.score >= scoreTier.platinum[0]) {
+      //   this.nameTag.setColor(scoreTier.platinum[1]);
+      // }
+      // if (this.score >= scoreTier.diamond[0]) {
+      //   this.nameTag.setColor(scoreTier.diamond[1]);
+      // }
     }
 
     if (nextTimestampFrame) {
@@ -254,6 +256,7 @@ export default class Player extends Phaser.GameObjects.Container {
         if(this.level != nextTimestampFrame.frame.level) {
           this.shipSprite.setTintFill(0xffffff);
           this.level = nextTimestampFrame.frame.level;
+          this.nameTag.setText(this.name + ' (Lv. ' + this.level + ')');
         } else if(nextTimestampFrame.frame.invulActive) {
           this.shipSprite.setTint(top, left, right, bottom);
         } else {
