@@ -316,13 +316,13 @@ module.exports = class Player extends SocketEntity {
    *  If the scores are equal, both players are deleted.
    */
   onCollision(player, globalEntities) {
-    if (this.score >= player.score && player.state === Constants.PLAYER_STATE.PLAYING) {
+    if (this.level >= player.level && player.state === Constants.PLAYER_STATE.PLAYING) {
       //QUEUE DEATH NOTIFICATION
       //ADD DEATH COUNT
       this.kills++;
       return player.die(this.name);
     }
-    if (this.score <= player.score && this.state === Constants.PLAYER_STATE.PLAYING) {
+    if (this.level <= player.level && this.state === Constants.PLAYER_STATE.PLAYING) {
       player.kills++;
       return this.die(player.name);
     }
