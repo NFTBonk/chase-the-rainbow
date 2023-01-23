@@ -41,6 +41,8 @@ export default class Player extends Phaser.GameObjects.Container {
     this.kills = 0;
     this.nameTag = this.scene.add.text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: '40px' }).setDepth(100);
 
+    this.level = 0;
+
     // this.isMagnetActive = false;
     // this.isDoubleActive = false;
     // this.isInvulActive = false;
@@ -238,6 +240,9 @@ export default class Player extends Phaser.GameObjects.Container {
           speedUpTimer: nextTimestampFrame.frame.speedUpTime
         });
         eventCenter.emit('killCount', nextTimestampFrame.frame.kills);
+        if(this.level != nextTimestampFrame.frame.level) {
+          eventCenter.emit('levelup', nextTimestampFrame.frame.level);
+        }
       }
       this.score = nextTimestampFrame.frame.score;
 
@@ -246,7 +251,10 @@ export default class Player extends Phaser.GameObjects.Container {
       let right = this.hsv[Math.floor(Math.random() * 359)].color;
       let bottom = this.hsv[Math.floor(Math.random() * 359)].color;
       if(this.shipSprite) {
-        if(nextTimestampFrame.frame.invulActive) {
+        if(this.level != nextTimestampFrame.frame.level) {
+          this.shipSprite.setTintFill(0xffffff);
+          this.level = nextTimestampFrame.frame.level;
+        } else if(nextTimestampFrame.frame.invulActive) {
           this.shipSprite.setTint(top, left, right, bottom);
         } else {
           this.shipSprite.clearTint();
