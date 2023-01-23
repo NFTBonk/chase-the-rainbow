@@ -45,9 +45,17 @@ module.exports = class AiPlayer extends Player {
     }
   }
 
-  die() {
+  die(killer) {
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;
+    }
+
+    if(this.invulTime > 0) {
+      return;
+    }
+
+    if(this.onDeath != null) {
+      this.onDeath({dead: this.name, killer: this.killer});
     }
     const bitsToDrop = Math.min(this.score / 10, 200);
     const bitsBetweenTrail = Math.min(Math.max(1, Math.floor(bitsToDrop / this.trail.trailQueue.length)), 100);

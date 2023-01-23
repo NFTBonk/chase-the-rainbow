@@ -260,6 +260,9 @@ setInterval(() => {
     const id = uuidv4();
     const aiPlayer = new AiPlayer(id);
     aiPlayer.spawn();
+    aiPlayer.onDeath = (data) => {
+      io.sockets.emit("death", data);
+    }
     // console.log(`AI Player Joined -> ${aiPlayer.id}`);
     players.add(aiPlayer);
   }
