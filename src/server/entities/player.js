@@ -122,7 +122,7 @@ module.exports = class Player extends SocketEntity {
       } 
 
       // reset trail length after 1500 points, when player increases tier
-      if (this.score >= Math.pow(this.level / Constants.PROGRESSION_DIVISOR, Constants.PROGRESSION_EXPONENT) === 0) {
+      if (this.score >= Math.pow(this.level / Constants.PROGRESSION_DIVISOR, Constants.PROGRESSION_EXPONENT)) {
         this.trail.setLength(1);
         this.level++;
       }
