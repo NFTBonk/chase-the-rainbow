@@ -163,7 +163,7 @@ class Ui extends Phaser.Scene {
         fontSize: SCORE_FONT_SIZE
       }
     ).setDepth(100);
-    this.levelupTxt.setVisible(false);
+    this.levelupTxt.setAlpha(0);
 
     this.levelUPTL =  this.tweens.createTimeline();
     this.levelUPTL.add({
