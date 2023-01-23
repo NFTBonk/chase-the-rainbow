@@ -69,6 +69,7 @@ class Ui extends Phaser.Scene {
       this.scoreGroup.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
       this.timer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 6);
       this.killIcon.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 3);
+      this.levelupTxt.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 4.5);
       this.killCount.setPosition(this.killIcon.x + this.killIcon.width, this.killIcon.y + this.killIcon.height * 0.5);
       this.fuelContainer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP - 20);
       this.fillMask.setPosition(this.fuelContainer.x + this.fuel.width * 0.5 - 15, this.fuelContainer.y + this.fuel.y - 200);
@@ -157,7 +158,7 @@ class Ui extends Phaser.Scene {
 
   createLevelPrompt() {
     this.levelupTxt = this.add.text(
-      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 4, "Level UP!", 
+      this.scale.baseSize.width * (this.cullFactorWidth / 2) + MARGIN_LEFT, this.scale.baseSize.height * (this.cullFactorHeight / 2) + MARGIN_TOP * 4.5, "Level UP!", 
       {
         fontFamily: 'Pangolin',
         fontSize: SCORE_FONT_SIZE
@@ -168,12 +169,12 @@ class Ui extends Phaser.Scene {
     this.levelUPTL =  this.tweens.createTimeline();
     this.levelUPTL.add({
       targets: this.levelupTxt,
-      duration: 500,
+      duration: 250,
       alpha: 1,
     });
     this.levelUPTL.add({
       targets: this.levelupTxt,
-      duration: 500,
+      duration: 250,
       alpha: 0,
       offset: "+=1000"
     });
