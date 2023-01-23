@@ -165,13 +165,13 @@ class Ui extends Phaser.Scene {
     ).setDepth(100);
     this.levelupTxt.setVisible(false);
 
-    this.levelUPTL =  scene.tweens.createTimeline();
-    this.animationTL.add({
+    this.levelUPTL =  this.tweens.createTimeline();
+    this.levelUPTL.add({
       targets: this.levelupTxt,
       duration: 500,
       alpha: 1,
     });
-    this.animationTL.add({
+    this.levelUPTL.add({
       targets: this.levelupTxt,
       duration: 500,
       alpha: 0,
