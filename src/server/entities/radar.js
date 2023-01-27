@@ -10,7 +10,7 @@ class Radar extends Entity {
     super();
 
     this.id = this.generateId();
-    this.type = Constants.ENTITY_TYPE.MAGNET;
+    this.type = Constants.ENTITY_TYPE.RADAR;
     this.collectedBy = false;
 
     // radar geometric attributes.
