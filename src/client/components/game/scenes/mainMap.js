@@ -264,7 +264,7 @@ export default class MainMap extends Phaser.Scene {
       });
 
       this[_powerUps] = frame.powerups;
-      this[_pickups] = [];
+      this[_pickups] = frame.entities;
 
       frame.entities.forEach((entity) => {
         newEntityIds.add(entity.id);
@@ -276,10 +276,6 @@ export default class MainMap extends Phaser.Scene {
             entityMap.set(entity.id, this.add.circle(entity.x, entity.y, 30, 'red').setDepth(5));
           } else {
             entityMap.set(entity.id, this.add.sprite(entity.x, entity.y, entity.type).setDepth(5));
-          }
-
-          if(!entity.collectedBy && (entity.type == constants.ENTITY_TYPE.RAINBOW_BIT || entity.type == constants.ENTITY_TYPE.FUEL_TANK)) {
-            this[_pickups].push({x: entity.x, y: entity.y});
           }
         }
 

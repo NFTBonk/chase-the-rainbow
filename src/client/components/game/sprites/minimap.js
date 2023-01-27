@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import constants from '../../../../shared/constants';
 
 const minimapSize = 200;
 const offsetX = 300;
@@ -36,16 +37,18 @@ export default class Minimap extends Phaser.GameObjects.Graphics {
             }
         })
 
+        this.fillStyle(0x00FF00, 0.25)
+        playerposition.pickups.forEach((pickup) => {
+            if(!pickup.isCollected && pickup.type === constants.ENTITY_TYPE.RAINBOW_BIT) {
+                this.fillRect(minimapSize * (pickup.x / 18000) - 2, minimapSize * (pickup.y / 18000) - 2, 4, 4)
+            }
+        });
+
         this.fillStyle(0xFFD700, 0.5)
         playerposition.powerups.forEach((powerup) => {
             if(!powerup.collectedBy) {
                 this.fillRect(minimapSize * (powerup.x / 18000) - 2, minimapSize * (powerup.y / 18000) - 2, 4, 4)
             }
-        });
-
-        this.fillStyle(0xFFFFFF, 0.5)
-        playerposition.pickups.forEach((pickup) => {
-            this.fillRect(minimapSize * (pickup.x / 18000) - 2, minimapSize * (pickup.y / 18000) - 2, 4, 4)
         });
     }
 
