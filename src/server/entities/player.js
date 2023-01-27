@@ -158,8 +158,8 @@ module.exports = class Player extends SocketEntity {
       this.score += Constants.SCORE_ADD_INCREMENT;
     }
 
-
     this.trail.setLength(Math.floor(Math.min((this.score - this.previousExpRequired) * Constants.SCORE_TO_TRAIL_LENGTH_RATIO, 50)));
+
   }
 
   activateSpeedUp() {
@@ -276,7 +276,6 @@ module.exports = class Player extends SocketEntity {
       }
     });
 
-    this.send('die', {dead: this.name, killer: this.killer});
 
     this.trail.setLength(0);
     return dropPositions;

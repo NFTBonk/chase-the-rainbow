@@ -42,6 +42,11 @@ export default class Minimap extends Phaser.GameObjects.Graphics {
                 this.fillRect(minimapSize * (powerup.x / 18000) - 2, minimapSize * (powerup.y / 18000) - 2, 4, 4)
             }
         });
+
+        this.fillStyle(0xFFFFFF, 0.5)
+        playerposition.pickups.forEach((pickup) => {
+            this.fillRect(minimapSize * (pickup.x / 18000) - 2, minimapSize * (pickup.y / 18000) - 2, 4, 4)
+        });
     }
 
 }

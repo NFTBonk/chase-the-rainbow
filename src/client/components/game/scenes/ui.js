@@ -304,7 +304,6 @@ class Ui extends Phaser.Scene {
     this.boostButton = this.add.graphics();
     this.boostButton.setInteractive(new Phaser.Geom.Rectangle(this.scale.baseSize.width * 0.5, 0, this.scale.baseSize.width * 0.5, this.scale.baseSize.height), Phaser.Geom.Rectangle.Contains);
     this.boostButton.on('pointerdown', () => {
-      console.log("BOOST!");
       eventCenter.emit("boostButton", true)
     });
     this.boostButton.on('pointerup', () => eventCenter.emit("boostButton", false));

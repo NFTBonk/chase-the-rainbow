@@ -14,6 +14,7 @@ const _serverType = Symbol("ServerType");
 const _timeLeft = Symbol("timeLeft");
 const _isWinner = Symbol("isWinner");
 const _powerUps = Symbol("Powerups");
+const _pickups = Symbol("pickups");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -216,7 +217,6 @@ export default class MainMap extends Phaser.Scene {
     });
 
     this.socket.on('death', (data) => {
-      console.log(data);
       eventCenter.emit('killNotif', data);
     })
     // Create key listener and check if player is boosting
@@ -230,10 +230,10 @@ export default class MainMap extends Phaser.Scene {
     this[_powerUps] = [];
     const entityIds = new Set();
     const entityMap = new Map();
+    this[_pickups] = [];
     this[_isWinner] = false;
 
     this.socket.on('frame', (frame) => {
-      console.log(frame.powerups);
       this.localPlayerSprite.pushFrame(frame.localPlayer);
       this[_timeLeft] = frame.timeLeft;
       this[_isWinner] = frame.isWinner;
@@ -264,6 +264,7 @@ export default class MainMap extends Phaser.Scene {
       });
 
       this[_powerUps] = frame.powerups;
+      this[_pickups] = [];
 
       frame.entities.forEach((entity) => {
         newEntityIds.add(entity.id);
@@ -275,6 +276,10 @@ export default class MainMap extends Phaser.Scene {
             entityMap.set(entity.id, this.add.circle(entity.x, entity.y, 30, 'red').setDepth(5));
           } else {
             entityMap.set(entity.id, this.add.sprite(entity.x, entity.y, entity.type).setDepth(5));
+          }
+
+          if(!entity.collectedBy && (entity.type == constants.ENTITY_TYPE.RAINBOW_BIT || entity.type == constants.ENTITY_TYPE.FUEL_TANK)) {
+            this[_pickups].push({x: entity.x, y: entity.y});
           }
         }
 
@@ -364,7 +369,7 @@ export default class MainMap extends Phaser.Scene {
       this.spaceKeyPressed = false;
     }
     
-    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps]});
+    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps], pickups: this.localPlayerSprite.radarActive ? this[_pickups] : []});
     if(this[_serverType] == 'Tournament') {
       eventCenter.emit("countdown", this[_timeLeft]);
     }

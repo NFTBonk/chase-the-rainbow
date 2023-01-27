@@ -317,6 +317,7 @@ setInterval(() => {
     const [_, drops1] = applyCollisions(player, playersInRadius, players);
     applyCollisions(player, entitiesInRadius, entities);
     const drops = applyTrailCollisions(player, playersInRadius, entities);
+    
 
     if (Array.isArray(drops) && drops.length > 0) {
       drops.forEach((drop) => {
@@ -338,7 +339,7 @@ setInterval(() => {
       playersInRadius.delete(player);
     }
 
-    const entitiesInRadius = entities.getAllEntitiesWithinRadius(player.x, player.y, 2000);
+    const entitiesInRadius = entities.getAllEntitiesWithinRadius(player.x, player.y, 6000);
     const powerupEntities = entities.getAllPowerupEntities();
 
     // Filter out all players not yet logged in.
@@ -370,9 +371,12 @@ setInterval(() => {
     }
   });
 
+
   // Send the leaderboard to all players
   const lb = [...players].sort((a, b) => b.score - a.score).map((a) => ({ score: a.score, id: a.id, name: a.name, kills: a.kills }));
   io.sockets.emit('lb', lb);
 
+
   frameId += 1;
 }, TICK_INTERVAL);
+

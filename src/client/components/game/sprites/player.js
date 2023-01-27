@@ -24,6 +24,8 @@ export default class Player extends Phaser.GameObjects.Container {
     this.lastTrailReset = 0;
     this.lastTrail = new Phaser.Math.Vector2(0, 0);
 
+    this.radarActive = false;
+
     this.magnetFX = this.scene.add.sprite(0, 0, 'magnetFX_1');
     this.magnetFX.setAlpha(0.3);
     this.magnetFX.play('magnetFX');
@@ -88,7 +90,6 @@ export default class Player extends Phaser.GameObjects.Container {
    * Sets visibility, angle of travel, initial position, and hit box.
   */
   onSpawn(state) {
-    console.log("I am spawned");
     this.emit('spawn');
     this.setVisible(true);
     this.shipSprite.setAlpha(1);
@@ -269,7 +270,7 @@ export default class Player extends Phaser.GameObjects.Container {
           this.scaleMultiplier = 1;
         }
       }
-
+      this.radarActive = nextTimestampFrame.frame.radarActive;
       this.magnetFX.setVisible(nextTimestampFrame.frame.magnetActive)
       this.kills = nextTimestampFrame.frame.kills;
     }

@@ -82,6 +82,7 @@ function applyTrailCollisions(player, otherPlayers) {
     }
   });
   const drops = [];
+
   system.getPotentials(line).forEach((potential) => {
     if (system.checkCollision(line, potential)) {
       const drop = player.die(potential.owner.name);
