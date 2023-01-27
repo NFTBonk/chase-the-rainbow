@@ -40,6 +40,7 @@ module.exports = class Player extends SocketEntity {
     this.doubleTime = 0;
     this.magnetTime = 0;
     this.invulTime = 0;
+    this.radarTime = 0;
     this.isTournament = 0;
     this.isWinner = false;
     this.kills = 0;
@@ -120,6 +121,14 @@ module.exports = class Player extends SocketEntity {
         }
       } 
 
+      if(this.radarTime > 0) {
+        this.radarTime -= dt;
+
+        if(this.radarTime < 0) {
+          this.radarTime = 0;
+        }
+      } 
+
       // reset trail length after 1500 points, when player increases tier
       if (this.score > this.expRequired) {
         this.trail.setLength(1);
@@ -168,6 +177,10 @@ module.exports = class Player extends SocketEntity {
 
   activateMagnet() {
     this.magnetTime = Constants.POWERUP_DURATION;
+  }
+
+  activateRadar() {
+    this.radarTime = Constants.POWERUP_DURATION;
   }
 
   setName(name) {
@@ -288,6 +301,7 @@ module.exports = class Player extends SocketEntity {
       invulActive: this.invulTime > 0,
       doubleActive: this.doubleTime > 0,
       speedUpActive: this.speedUpTime > 0,
+      radarActive: this.radarTime > 0,
       level: this.level
     };
   }

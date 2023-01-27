@@ -22,8 +22,8 @@ const SpeedUp = require('./entities/speedUp');
 const Invulnerable = require('./entities/invulnerable');
 const Magnet = require('./entities/magnet');
 const Doubler = require('./entities/double');
+const Radar = require('./entities/radar');
 const { TOURNAMENT_COOLDOWN } = require('../shared/constants');
-const { WineBarRounded } = require('@mui/icons-material');
 
 require('dotenv').config();
 require('isomorphic-fetch');
@@ -274,18 +274,22 @@ setInterval(() => {
       //1% chance to generate a powerup 99% chance to generate non-powerup entities
       if(Math.random() < 0.01) {
         let powerupTypeRandomizer = Math.random();
-        if(powerupTypeRandomizer < 0.25) {
+        if(powerupTypeRandomizer < 0.20) {
           const speedUp = new SpeedUp();
           entities.add(speedUp);
-        } else if (powerupTypeRandomizer >= 0.25 && powerupTypeRandomizer < 0.5) {
+        } else if (powerupTypeRandomizer >= 0.20 && powerupTypeRandomizer < 0.40) {
           const double = new Doubler();
           entities.add(double);
-        } else if (powerupTypeRandomizer >= 0.5 && powerupTypeRandomizer < 0.75) {
+        } else if (powerupTypeRandomizer >= 0.40 && powerupTypeRandomizer < 0.60) {
           const invul = new Invulnerable();
           entities.add(invul);
-        } else {
+        } else if (powerupTypeRandomizer >= 0.60 && powerupTypeRandomizer < 0.80) {
           const magnet = new Magnet();
           entities.add(magnet);
+        } else {
+          const radar = new Radar();
+          entities.add(radar);
+
         }
         
       } else {
