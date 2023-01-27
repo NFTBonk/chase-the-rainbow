@@ -29,10 +29,12 @@ import invulImage from '../../../../../public/assets/images/items/invulnerable.p
 import speedUpImage from '../../../../../public/assets/images/items/speedup.png';
 import doubleImage from '../../../../../public/assets/images/items/double.png';
 import magnetImage from '../../../../../public/assets/images/items/magnet.png';
+import radarImage from '../../../../../public/assets/images/items/radar.png';
 import invulIconImage from '../../../../../public/assets/images/items/invulnerable_icon.png';
 import speedUpIconImage from '../../../../../public/assets/images/items/speed_up_icon.png';
 import doubleIconImage from '../../../../../public/assets/images/items/double_icon.png';
 import magnetIconImage from '../../../../../public/assets/images/items/magnet_icon.png';
+import radarIconImage from '../../../../../public/assets/images/items/radar_icon.png';
 import defaultShipImage from '../../../../../public/assets/images/ships/ship1/head.png';
 import rainbowPickupAudio from '../../../../../public/assets/audio/rainbow_pickup.mp3';
 import fuelPickupAudio from '../../../../../public/assets/audio/fuel_pickup.mp3';
@@ -85,10 +87,12 @@ class Preload extends Phaser.Scene {
     this.load.image('invulnerable', invulImage);
     this.load.image('double', doubleImage);
     this.load.image('magnet', magnetImage);
+    this.load.image('radar', radarImage);
     this.load.image('speedup_icon', speedUpIconImage);
     this.load.image('invulnerable_icon', invulIconImage);
     this.load.image('double_icon', doubleIconImage);
     this.load.image('magnet_icon', magnetIconImage);
+    this.load.image('radar_icon', radarIconImage);
     this.load.image('magnetFX_1', magnetFX_1);
     this.load.image('magnetFX_2', magnetFX_2);
     this.load.image('magnetFX_3', magnetFX_3);
