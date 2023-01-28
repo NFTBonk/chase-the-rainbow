@@ -87,6 +87,7 @@ export default class MainMap extends Phaser.Scene {
 
   create() {
     this.login();
+    this.hsv = Phaser.Display.Color.HSVColorWheel();
     const url = this.server === 'us1' ? 'https://www.chasetherainbow.app' : `https://space-doodles-${this.server}.herokuapp.com`;
 
     this.socket = io(this.prodMode ? url : undefined, {
@@ -274,6 +275,23 @@ export default class MainMap extends Phaser.Scene {
           // Create rainbow bit or fuel tank.
           if (entity.type === constants.ENTITY_TYPE.DEBUG_CIRCLE) {
             entityMap.set(entity.id, this.add.circle(entity.x, entity.y, 30, 'red').setDepth(5));
+          } else if(entity.type === constants.ENTITY_TYPE.TREASURE) {
+            console.log("process treasure");
+            this.treasure = this.add.sprite(entity.x, entity.y, entity.type).setDepth(5);
+            if(!this.treasureLife) {
+              this.treasureLife = this.add.text(
+                this.treasure.x, this.treasure.y, entity.life, 
+                {
+                  fontFamily: 'Pangolin',
+                  fontSize: '36px',
+                  align: 'center'
+                }
+                ).setDepth(100).setOrigin(0.5);
+            } else {
+              this.treasureLife.setPosition(this.treasure.x, this.treasure.y);
+              this.treasureLife.setVisible(true);
+            }
+            entityMap.set(entity.id, this.treasure);
           } else {
             entityMap.set(entity.id, this.add.sprite(entity.x, entity.y, entity.type).setDepth(5));
           }
@@ -281,6 +299,24 @@ export default class MainMap extends Phaser.Scene {
 
         function lerp(a, b, t) {
           return a + (b - a) * t;
+        }
+
+        if(entity.type == constants.ENTITY_TYPE.TREASURE && this.treasure && this.treasureLife) {
+          if(entity.isInvul) {
+            let top = this.hsv[Math.floor(Math.random() * 359)].color;
+            let left = this.hsv[Math.floor(Math.random() * 359)].color;
+            let right = this.hsv[Math.floor(Math.random() * 359)].color;
+            let bottom = this.hsv[Math.floor(Math.random() * 359)].color;
+            this.treasure.setTint(top, left, right, bottom);
+          } else {
+            this.treasure.clearTint();
+          }
+
+          if(this.treasure.x != entity.x || this.treasure.y != entity.y) {
+            this.treasure.setPosition(entity.x, entity.y);
+            this.treasureLife.setPosition(this.treasure.x, this.treasure.y);
+          }
+          this.treasureLife.setText(entity.life);
         }
 
         if (entity.collectedBy && entityMap.has(entity.id) && (entity.collectedBy === this.socket.id || playerIds.has(entity.collectedBy)) && !this.magnet.hasOwnProperty(entity.id)) {
@@ -317,6 +353,9 @@ export default class MainMap extends Phaser.Scene {
           // Rainbow bit or fuel tank is deleted.
           const e = entityMap.get(entityId);
           if (e) {
+            if(e == this.treasure) {
+              this.treasureLife.setVisible(false);
+            }
             e.destroy();
             entityIds.delete(entityId);
             entityMap.delete(entityId);

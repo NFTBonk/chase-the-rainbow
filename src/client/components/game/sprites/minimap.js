@@ -46,9 +46,13 @@ export default class Minimap extends Phaser.GameObjects.Graphics {
 
         this.fillStyle(0xFFD700, 0.5)
         playerposition.powerups.forEach((powerup) => {
-            if(!powerup.collectedBy) {
+            if(powerup.type === constants.ENTITY_TYPE.TREASURE) {
+                this.fillCircle(minimapSize * (powerup.x / 18000), minimapSize * (powerup.y / 18000), 5);
+            } else if(!powerup.collectedBy) {
                 this.fillRect(minimapSize * (powerup.x / 18000) - 2, minimapSize * (powerup.y / 18000) - 2, 4, 4)
             }
+
+            
         });
     }
 

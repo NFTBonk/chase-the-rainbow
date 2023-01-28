@@ -30,6 +30,7 @@ import speedUpImage from '../../../../../public/assets/images/items/speedup.png'
 import doubleImage from '../../../../../public/assets/images/items/double.png';
 import magnetImage from '../../../../../public/assets/images/items/magnet.png';
 import radarImage from '../../../../../public/assets/images/items/radar.png';
+import chestImage from '../../../../../public/assets/images/items/chest.png';
 import invulIconImage from '../../../../../public/assets/images/items/invulnerable_icon.png';
 import speedUpIconImage from '../../../../../public/assets/images/items/speed_up_icon.png';
 import doubleIconImage from '../../../../../public/assets/images/items/double_icon.png';
@@ -88,6 +89,7 @@ class Preload extends Phaser.Scene {
     this.load.image('double', doubleImage);
     this.load.image('magnet', magnetImage);
     this.load.image('radar', radarImage);
+    this.load.image('treasure', chestImage);
     this.load.image('speedup_icon', speedUpIconImage);
     this.load.image('invulnerable_icon', invulIconImage);
     this.load.image('double_icon', doubleIconImage);

@@ -24,6 +24,7 @@ const Magnet = require('./entities/magnet');
 const Doubler = require('./entities/double');
 const Radar = require('./entities/radar');
 const { TOURNAMENT_COOLDOWN } = require('../shared/constants');
+const Treasure = require('./entities/treasure');
 
 require('dotenv').config();
 require('isomorphic-fetch');
@@ -108,6 +109,7 @@ app.get('/leaderBoard', async (request, response, next) => {
 // TODO: Restructure entities to have hierarchy, and single World .
 let players = new PlayerSet();
 let entities = new EntitySet();
+entities.add(new Treasure());
 
 httpServer.listen(process.env.PORT || 3000, async () => {
   try {
@@ -236,6 +238,7 @@ setInterval(() => {
     } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) < Constants.TOURNAMENT_DURATION && onCooldown) {
       players = new PlayerSet();
       entities = new EntitySet();
+      entities.add(new Treasure());
       onCooldown = false;
     }
     //IDENTIFY START TIME
@@ -315,7 +318,7 @@ setInterval(() => {
     const entitiesInRadius = entities.getAllEntitiesWithinRadius(player.x, player.y, 2000);
 
     const [_, drops1] = applyCollisions(player, playersInRadius, players);
-    applyCollisions(player, entitiesInRadius, entities);
+    const [__, chestDrops] = applyCollisions(player, entitiesInRadius, entities);
     const drops = applyTrailCollisions(player, playersInRadius, entities);
     
 
@@ -325,6 +328,12 @@ setInterval(() => {
       });
     } else if (Array.isArray(drops1) && drops1.length > 0) {
       drops1.forEach((drop) => {
+        entities.add(drop);
+      });
+    }
+
+    if(Array.isArray(chestDrops) && chestDrops.length > 0) {
+      chestDrops.forEach((drop) => {
         entities.add(drop);
       });
     }
