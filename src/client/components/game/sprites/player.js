@@ -240,7 +240,8 @@ export default class Player extends Phaser.GameObjects.Container {
           invulTimer: nextTimestampFrame.frame.invulTime,
           doubleTimer: nextTimestampFrame.frame.doubleTime,
           magnetTimer: nextTimestampFrame.frame.magnetTime,
-          speedUpTimer: nextTimestampFrame.frame.speedUpTime
+          speedUpTimer: nextTimestampFrame.frame.speedUpTime,
+          radarTimer: nextTimestampFrame.frame.radarTime,
         });
         eventCenter.emit('killCount', nextTimestampFrame.frame.kills);
         if(this.level != nextTimestampFrame.frame.level) {
