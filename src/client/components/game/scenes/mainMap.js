@@ -354,6 +354,7 @@ export default class MainMap extends Phaser.Scene {
           const e = entityMap.get(entityId);
           if (e) {
             if(e == this.treasure) {
+              this.sound.play('powerupPickup', { loop: false });
               this.treasureLife.setVisible(false);
             }
             e.destroy();
