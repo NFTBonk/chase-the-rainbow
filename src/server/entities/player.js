@@ -33,6 +33,10 @@ module.exports = class Player extends SocketEntity {
     this.speed = 0.5;
     this.tourneyCode = '';
     this.walletaddy = '';
+    this.speedUpTime = 0;
+    this.doubleTime = 0;
+    this.magnetTime = 0;
+    this.invulTime = 0;
     this.isTournament = 0;
     this.isWinner = false;
     this.kills = 0;
@@ -65,12 +69,56 @@ module.exports = class Player extends SocketEntity {
 
       // handle boosting
       if (this.boosting && this.gas >= dt * 0.1) {
-        this.speed = 0.75;
+        if(this.speedUpTime > 0) {
+          this.speed = 1;
+        } else {
+          this.speed = 0.75;
+        }
         this.gas -= dt * 0.1;
       } else {
         this.boosting = false;
-        this.speed = 0.5;
+        if(this.speedUpTime > 0) {
+          this.speed = 0.75;
+        } else {
+          this.speed = 0.5;
+        }
       }
+
+      if(this.speedUpTime > 0) {
+        this.speedUpTime -= dt;
+
+        if(this.speedUpTime < 0) {
+          this.speedUpTime = 0;
+        }
+      } 
+
+      if(this.doubleTime > 0) {
+        this.doubleTime -= dt;
+
+        if(this.doubleTime < 0) {
+          this.doubleTime = 0;
+        }
+      } 
+
+      if(this.doubleTime <= 0) {
+        this.radius = Constants.PLAYER_RADIUS * 2;
+      }
+
+      if(this.invulTime > 0) {
+        this.invulTime -= dt;
+
+        if(this.invulTime < 0) {
+          this.invulTime = 0;
+        }
+      } 
+
+      if(this.magnetTime > 0) {
+        this.magnetTime -= dt;
+
+        if(this.magnetTime < 0) {
+          this.magnetTime = 0;
+        }
+      } 
 
       // reset trail length after 1500 points, when player increases tier
       if (this.score % 1500 === 0) {
@@ -92,8 +140,30 @@ module.exports = class Player extends SocketEntity {
   }
 
   addScore() {
-    this.score += Constants.SCORE_ADD_INCREMENT;
+    if(this.doubleTime > 0) {
+      this.score += Constants.SCORE_ADD_INCREMENT * 2;
+    } else {
+      this.score += Constants.SCORE_ADD_INCREMENT;
+    }
     this.trail.setLength(Math.floor(this.score % 1500 * Constants.SCORE_TO_TRAIL_LENGTH_RATIO) + 1);
+  }
+
+  activateSpeedUp() {
+    this.speedUpTime = Constants.POWERUP_DURATION;
+  }
+
+  activateDouble() {
+    console.log("activate double");
+    this.doubleTime = Constants.POWERUP_DURATION;
+    this.radius = Constants.PLAYER_RADIUS * 2;
+  }
+
+  activateInvul() {
+    this.invulTime = Constants.POWERUP_DURATION;
+  }
+
+  activateMagnet() {
+    this.magnetTime = Constants.POWERUP_DURATION;
   }
 
   setName(name) {
@@ -141,6 +211,10 @@ module.exports = class Player extends SocketEntity {
   die(killer) {
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;
+    }
+
+    if(this.invulTime > 0) {
+      return;
     }
 
     if (!this.ai && (this.isTournament == 0 || this.isWinner)) {
@@ -206,6 +280,10 @@ module.exports = class Player extends SocketEntity {
       boosting: this.boosting,
       trail: this.trail.getNetworkModel(),
       nft: this.nft,
+      magnetActive: this.magnetTime > 0,
+      invulActive: this.invulTime > 0,
+      doubleActive: this.doubleTime > 0,
+      speedUpActive: this.speedUpTime > 0
     };
   }
 
@@ -218,6 +296,10 @@ module.exports = class Player extends SocketEntity {
     return Object.assign(this.getNetworkModel(), {
       score: this.score,
       gas: this.gas,
+      magnetTime: this.magnetTime,
+      invulTime: this.invulTime,
+      doubleTime: this.doubleTime,
+      speedUpTime: this.speedUpTime,
       kills: this.kills
     });
   }

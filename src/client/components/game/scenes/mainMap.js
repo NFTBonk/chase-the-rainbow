@@ -8,11 +8,12 @@ import Player from '../sprites/player';
 import DeathScreen from '../../deathScreen/index';
 
 
-//Private Reference for PlayerMap
+//Private Reference for PlayerMap and Powerups
 const _playerMap = Symbol("PlayerMap");
 const _serverType = Symbol("ServerType");
 const _timeLeft = Symbol("timeLeft");
 const _isWinner = Symbol("isWinner");
+const _powerUps = Symbol("Powerups");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -91,6 +92,17 @@ export default class MainMap extends Phaser.Scene {
       closeOnBeforeunload: false,
       transports: ['websocket'],
     });
+
+    this.anims.create({
+      key: 'magnetFX',
+      frames: [
+        {key: 'magnetFX_1', duration: 100}, 
+        {key: 'magnetFX_2', duration: 100}, 
+        {key: 'magnetFX_3', duration: 100}, 
+        {key: 'magnetFX_4', duration: 100}, 
+      ],
+      repeat: -1,
+    })
 
     this.moon = this.add.image(8314, 16415, 'moon').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
     this.bluePlanet = this.add.image(6289, 14146, 'doodliftsplanet').setDepth(3.6).setScrollFactor(this.config.planetScrollFactor);
@@ -215,11 +227,13 @@ export default class MainMap extends Phaser.Scene {
     // Used to manage player/rainbow bit/fuel tank creation, deletion, and update.
     const playerIds = new Set();
     this[_playerMap] = new Map();
+    this[_powerUps] = [];
     const entityIds = new Set();
     const entityMap = new Map();
     this[_isWinner] = false;
 
     this.socket.on('frame', (frame) => {
+      console.log(frame.powerups);
       this.localPlayerSprite.pushFrame(frame.localPlayer);
       this[_timeLeft] = frame.timeLeft;
       this[_isWinner] = frame.isWinner;
@@ -248,6 +262,8 @@ export default class MainMap extends Phaser.Scene {
           this[_playerMap].delete(playerId);
         }
       });
+
+      this[_powerUps] = frame.powerups;
 
       frame.entities.forEach((entity) => {
         newEntityIds.add(entity.id);
@@ -348,7 +364,7 @@ export default class MainMap extends Phaser.Scene {
       this.spaceKeyPressed = false;
     }
     
-    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap]});
+    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps]});
     if(this[_serverType] == 'Tournament') {
       eventCenter.emit("countdown", this[_timeLeft]);
     }

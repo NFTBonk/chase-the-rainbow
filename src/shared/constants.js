@@ -15,6 +15,10 @@ module.exports = Object.freeze({
     RAINBOW_BIT: 'rainbowBit',
     FUEL_TANK: 'fuelTank',
     DEBUG_CIRCLE: 'debugCircle',
+    SPEED_UP: 'speedUp',
+    X2: 'double',
+    INVULNERABLE: 'invulnerable',
+    MAGNET: 'magnet'
   },
   PLAYER_RADIUS: 35,
   ITEM_RADIUS: 25 /** rainbow bits and fuel tanks */,
@@ -23,6 +27,7 @@ module.exports = Object.freeze({
   GAS_ADD_INCREMENT: 100,
   GAS_MINUS_INCREMENT: -10,
   SCORE_ADD_INCREMENT: 10,
+  POWERUP_DURATION: 15000,
   SCORE_TO_TRAIL_LENGTH_RATIO: 1/40,
 
   //ENUM FOR SERVER TYPE

@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
 const { createServer } = require('http');
-const { MongoClient } = require('mongodb');
+const { MongoClient, Double } = require('mongodb');
 const { Server } = require('socket.io');
 const { v4: uuidv4 } = require('uuid');
 
@@ -18,6 +18,10 @@ const RainbowBit = require('./entities/rainbowBit');
 
 const EntitySet = require('./sets/entitySet');
 const PlayerSet = require('./sets/playerSet');
+const SpeedUp = require('./entities/speedUp');
+const Invulnerable = require('./entities/invulnerable');
+const Magnet = require('./entities/magnet');
+const Doubler = require('./entities/double');
 const { TOURNAMENT_COOLDOWN } = require('../shared/constants');
 const { WineBarRounded } = require('@mui/icons-material');
 
@@ -263,13 +267,33 @@ setInterval(() => {
   // Generating entities if there are less than the max amount
   if (entities.size < Constants.MAX_ITEMS) {
     for (let i = entities.size; i < Constants.MAX_ITEMS; i++) {
-      // 50/50 chance to generate either a rainbow bit or a fuel tank
-      if (Math.random() < 0.5) {
-        const rainbowBit = new RainbowBit();
-        entities.add(rainbowBit);
+     
+      //1% chance to generate a powerup 99% chance to generate non-powerup entities
+      if(Math.random() < 0.01) {
+        let powerupTypeRandomizer = Math.random();
+        if(powerupTypeRandomizer < 0.25) {
+          const speedUp = new SpeedUp();
+          entities.add(speedUp);
+        } else if (powerupTypeRandomizer >= 0.25 && powerupTypeRandomizer < 0.5) {
+          const double = new Doubler();
+          entities.add(double);
+        } else if (powerupTypeRandomizer >= 0.5 && powerupTypeRandomizer < 0.75) {
+          const invul = new Invulnerable();
+          entities.add(invul);
+        } else {
+          const magnet = new Magnet();
+          entities.add(magnet);
+        }
+        
       } else {
-        const fuelTank = new FuelTank();
-        entities.add(fuelTank);
+        // 50/50 chance to generate either a rainbow bit or a fuel tank
+        if (Math.random() < 0.5) {
+          const rainbowBit = new RainbowBit();
+          entities.add(rainbowBit);
+        } else {
+          const fuelTank = new FuelTank();
+          entities.add(fuelTank);
+        }
       }
     }
   }
@@ -308,6 +332,7 @@ setInterval(() => {
     }
 
     const entitiesInRadius = entities.getAllEntitiesWithinRadius(player.x, player.y, 2000);
+    const powerupEntities = entities.getAllPowerupEntities();
 
     // Filter out all players not yet logged in.
     playersInRadius = new Set(Array.from(playersInRadius).filter(
@@ -319,16 +344,18 @@ setInterval(() => {
     const entitiesInRadiusNetworkModel = Array.from(entitiesInRadius)
       .map((entityInRadius) => entityInRadius.getNetworkModel());
 
+
+    //PASS POWERUPS
     //GENERATE LIST OF DEAD PLAYERS
     const framePacket = {
       id: frameId,
       localPlayer: player.getLocalPlayerNetworkModel(),
       players: playersInRadiusNetworkModel,
       entities: entitiesInRadiusNetworkModel,
+      powerups: powerupEntities,
       timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
       isWinner: player.isWinner,
     };
-
     if (player.ai) {
       player.tick(entitiesInRadiusNetworkModel);
     } else {

@@ -3,6 +3,7 @@ import FuelBar from '../sprites/fuelbar';
 import KillNotif from '../sprites/killNotif';
 import Leaderboard from '../sprites/leaderboard';
 import Minimap from '../sprites/minimap';
+import PowerupHUD from '../sprites/powerupHUD';
 import eventCenter from './eventCenter';
 
 const MARGIN_LEFT = 22;
@@ -31,6 +32,7 @@ class Ui extends Phaser.Scene {
     this.createFuel();
     this.createControlInfo();
     this.createMinimap();
+    this.createPowerupHUD();
     this.createKillCount();
     this.createTimer();
     if(this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
@@ -50,6 +52,7 @@ class Ui extends Phaser.Scene {
     eventCenter.on('spacebar', this.onUseGas, this); // listen for fuel updates
     eventCenter.on('lb', this.lb.updateLeaderboard, this.lb); // listen for leaderboard updates
     eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
+    eventCenter.on('powerups', this.powerupHUD.updatePowerupTimes, this.powerupHUD); //listen for powerup updates
     eventCenter.on('countdown', this.updateTimer, this); //listen for timer updates
     eventCenter.on('killCount', this.updateKillCount, this); //listen for timer updates
     eventCenter.on('killNotif', this.killNotif.addToQueue, this.killNotif); //listen for timer updates
@@ -59,6 +62,7 @@ class Ui extends Phaser.Scene {
       let cullFactorWidth = (displaySize.width - displaySize._parent.width ) / displaySize.width;
 
       this.minimap.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
+      this.powerupHUD.setPosition(baseSize.width * 0.5, baseSize.height * (1 - cullFactorHeight / 2) - 150);
       this.minimapMask.setPosition(baseSize.width * (1 - cullFactorWidth / 2)  - 300, baseSize.height * (1 - cullFactorHeight / 2) - 220);
       this.scoreGroup.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
       this.timer.setPosition(baseSize.width * (cullFactorWidth / 2) + MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 6);
@@ -208,6 +212,10 @@ class Ui extends Phaser.Scene {
      this.controlInfo.setText("TAP RIGHT SIDE OF THE SCREEN TO BOOST.");
     }
     this.controlInfo.setScrollFactor(0);
+  }
+
+  createPowerupHUD() {
+    this.powerupHUD = new PowerupHUD(this, this.scale.baseSize.width * 0.5, this.scale.baseSize.height * (1 - this.cullFactorHeight / 2) - 150);
   }
 
   createMinimap() {

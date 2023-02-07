@@ -23,7 +23,16 @@ function applyCollisions(player, localEntities, globalEntities) {
     if (entity.shouldCollide()) {
       let entityRadius = entity.radius;
       if (entity.type === constants.ENTITY_TYPE.RAINBOW_BIT
-         || entity.type === constants.ENTITY_TYPE.FUEL_TANK) entityRadius *= 2;
+         || entity.type === constants.ENTITY_TYPE.FUEL_TANK || 
+         entity.type === constants.ENTITY_TYPE.INVULNERABLE ||
+         entity.type === constants.ENTITY_TYPE.MAGNET ||
+         entity.type === constants.ENTITY_TYPE.X2 ||
+         entity.type === constants.ENTITY_TYPE.SPEED_UP) {
+          if(player.magnetTime > 0) 
+            entityRadius *= 8;
+          else 
+            entityRadius *= 2;
+         }
       const circle = new Circle({ x: entity.x, y: entity.y }, player.radius + entityRadius);
       circle.entity = entity;
       system.insert(circle);
