@@ -24,6 +24,8 @@ export default class Player extends Phaser.GameObjects.Container {
     this.lastTrailReset = 0;
     this.lastTrail = new Phaser.Math.Vector2(0, 0);
 
+    this.radarActive = false;
+
     this.magnetFX = this.scene.add.sprite(0, 0, 'magnetFX_1');
     this.magnetFX.setAlpha(0.3);
     this.magnetFX.play('magnetFX');
@@ -39,7 +41,10 @@ export default class Player extends Phaser.GameObjects.Container {
     this.isLocalPlayer = isLocalPlayer;
     this.score = 0;
     this.kills = 0;
+    this.name = '';
     this.nameTag = this.scene.add.text(0, 0, '', { fontFamily: '"Pangolin"', fontSize: '40px' }).setDepth(100);
+
+    this.level = 0;
 
     // this.isMagnetActive = false;
     // this.isDoubleActive = false;
@@ -85,7 +90,6 @@ export default class Player extends Phaser.GameObjects.Container {
    * Sets visibility, angle of travel, initial position, and hit box.
   */
   onSpawn(state) {
-    console.log("I am spawned");
     this.emit('spawn');
     this.setVisible(true);
     this.shipSprite.setAlpha(1);
@@ -128,7 +132,8 @@ export default class Player extends Phaser.GameObjects.Container {
     if (this.frameHistory.length > FRAME_HISTORY_MAX) {
       this.frameHistory.shift();
     }
-    this.nameTag.setText(frame.name);
+    this.name = frame.name;
+    this.nameTag.setText(this.name + ' (Lv. ' + this.level + ')');
 
     // Events are not sent from the server to the client, instead the client
     // will try to infer events from state changes.
@@ -193,25 +198,25 @@ export default class Player extends Phaser.GameObjects.Container {
       else this.nameTag.visible = true;
 
       // nametag color change based on score
-      const scoreTier = {
-        silver: [1500, '#C0C0C0'],
-        gold: [3000, '#ffd700'],
-        platinum: [4500, '#7FFFD4'],
-        diamond: [6000, '#b9f2ff'],
-      };
+      // const scoreTier = {
+      //   silver: [1500, '#C0C0C0'],
+      //   gold: [3000, '#ffd700'],
+      //   platinum: [4500, '#7FFFD4'],
+      //   diamond: [6000, '#b9f2ff'],
+      // };
 
-      if (this.score >= scoreTier.silver[0]) {
-        this.nameTag.setColor(scoreTier.silver[1]);
-      }
-      if (this.score >= scoreTier.gold[0]) {
-        this.nameTag.setColor(scoreTier.gold[1]);
-      }
-      if (this.score >= scoreTier.platinum[0]) {
-        this.nameTag.setColor(scoreTier.platinum[1]);
-      }
-      if (this.score >= scoreTier.diamond[0]) {
-        this.nameTag.setColor(scoreTier.diamond[1]);
-      }
+      // if (this.score >= scoreTier.silver[0]) {
+      //   this.nameTag.setColor(scoreTier.silver[1]);
+      // }
+      // if (this.score >= scoreTier.gold[0]) {
+      //   this.nameTag.setColor(scoreTier.gold[1]);
+      // }
+      // if (this.score >= scoreTier.platinum[0]) {
+      //   this.nameTag.setColor(scoreTier.platinum[1]);
+      // }
+      // if (this.score >= scoreTier.diamond[0]) {
+      //   this.nameTag.setColor(scoreTier.diamond[1]);
+      // }
     }
 
     if (nextTimestampFrame) {
@@ -235,9 +240,13 @@ export default class Player extends Phaser.GameObjects.Container {
           invulTimer: nextTimestampFrame.frame.invulTime,
           doubleTimer: nextTimestampFrame.frame.doubleTime,
           magnetTimer: nextTimestampFrame.frame.magnetTime,
-          speedUpTimer: nextTimestampFrame.frame.speedUpTime
+          speedUpTimer: nextTimestampFrame.frame.speedUpTime,
+          radarTimer: nextTimestampFrame.frame.radarTime,
         });
         eventCenter.emit('killCount', nextTimestampFrame.frame.kills);
+        if(this.level != nextTimestampFrame.frame.level) {
+          eventCenter.emit('levelup', nextTimestampFrame.frame.level);
+        }
       }
       this.score = nextTimestampFrame.frame.score;
 
@@ -246,7 +255,11 @@ export default class Player extends Phaser.GameObjects.Container {
       let right = this.hsv[Math.floor(Math.random() * 359)].color;
       let bottom = this.hsv[Math.floor(Math.random() * 359)].color;
       if(this.shipSprite) {
-        if(nextTimestampFrame.frame.invulActive) {
+        if(this.level != nextTimestampFrame.frame.level) {
+          this.shipSprite.setTintFill(0xffffff);
+          this.level = nextTimestampFrame.frame.level;
+          this.nameTag.setText(this.name + ' (Lv. ' + this.level + ')');
+        } else if(nextTimestampFrame.frame.invulActive) {
           this.shipSprite.setTint(top, left, right, bottom);
         } else {
           this.shipSprite.clearTint();
@@ -258,7 +271,7 @@ export default class Player extends Phaser.GameObjects.Container {
           this.scaleMultiplier = 1;
         }
       }
-
+      this.radarActive = nextTimestampFrame.frame.radarActive;
       this.magnetFX.setVisible(nextTimestampFrame.frame.magnetActive)
       this.kills = nextTimestampFrame.frame.kills;
     }

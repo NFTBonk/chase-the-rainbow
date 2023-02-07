@@ -43,7 +43,7 @@ function applyCollisions(player, localEntities, globalEntities) {
     if (system.checkCollision(line, potential)) {
       collidedEntities.add(potential.entity);
       const drop = potential.entity.onCollision(player, globalEntities);
-      if (drop) {
+      if (Array.isArray(drop) && drop.length > 0) {
         drop.forEach((pos) => {
           const bit = new RainbowBit();
           bit.x = pos.x;
@@ -82,6 +82,7 @@ function applyTrailCollisions(player, otherPlayers) {
     }
   });
   const drops = [];
+
   system.getPotentials(line).forEach((potential) => {
     if (system.checkCollision(line, potential)) {
       const drop = player.die(potential.owner.name);

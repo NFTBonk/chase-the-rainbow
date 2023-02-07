@@ -45,9 +45,17 @@ module.exports = class AiPlayer extends Player {
     }
   }
 
-  die() {
+  die(killer) {
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;
+    }
+
+    if(this.invulTime > 0) {
+      return;
+    }
+
+    if(this.onDeath != null) {
+      this.onDeath({dead: this.name, killer: killer});
     }
     const bitsToDrop = Math.min(this.score / 10, 200);
     const bitsBetweenTrail = Math.min(Math.max(1, Math.floor(bitsToDrop / this.trail.trailQueue.length)), 100);
@@ -69,10 +77,12 @@ module.exports = class AiPlayer extends Player {
     this.lastX = this.x;
     this.lastY = this.y;
     this.angle = 0;
-    this.trail.setLength(20);
     this.trail.resetPosition(this.x, this.y);
     this.score = 0;
-
+    this.kills = 0;
+    this.level = 0;
+    this.expRequired = 0;
+    this.previousExpRequired = 0;
     return dropPositions;
   }
 };

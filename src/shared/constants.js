@@ -18,7 +18,9 @@ module.exports = Object.freeze({
     SPEED_UP: 'speedUp',
     X2: 'double',
     INVULNERABLE: 'invulnerable',
-    MAGNET: 'magnet'
+    MAGNET: 'magnet',
+    RADAR: 'radar',
+    TREASURE: 'treasure'
   },
   PLAYER_RADIUS: 35,
   ITEM_RADIUS: 25 /** rainbow bits and fuel tanks */,
@@ -29,6 +31,10 @@ module.exports = Object.freeze({
   SCORE_ADD_INCREMENT: 10,
   POWERUP_DURATION: 15000,
   SCORE_TO_TRAIL_LENGTH_RATIO: 1/40,
+  PROGRESSION_DIVISOR: 0.1,
+  PROGRESSION_EXPONENT: 2,
+  TREASURE_INVUL_TIME: 1500,
+  TREASURE_LIFE: 10,
 
   //ENUM FOR SERVER TYPE
   SERVER_TYPE : {

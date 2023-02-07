@@ -22,8 +22,9 @@ const SpeedUp = require('./entities/speedUp');
 const Invulnerable = require('./entities/invulnerable');
 const Magnet = require('./entities/magnet');
 const Doubler = require('./entities/double');
+const Radar = require('./entities/radar');
 const { TOURNAMENT_COOLDOWN } = require('../shared/constants');
-const { WineBarRounded } = require('@mui/icons-material');
+const Treasure = require('./entities/treasure');
 
 require('dotenv').config();
 require('isomorphic-fetch');
@@ -108,6 +109,7 @@ app.get('/leaderBoard', async (request, response, next) => {
 // TODO: Restructure entities to have hierarchy, and single World .
 let players = new PlayerSet();
 let entities = new EntitySet();
+entities.add(new Treasure());
 
 httpServer.listen(process.env.PORT || 3000, async () => {
   try {
@@ -236,6 +238,7 @@ setInterval(() => {
     } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) < Constants.TOURNAMENT_DURATION && onCooldown) {
       players = new PlayerSet();
       entities = new EntitySet();
+      entities.add(new Treasure());
       onCooldown = false;
     }
     //IDENTIFY START TIME
@@ -260,6 +263,9 @@ setInterval(() => {
     const id = uuidv4();
     const aiPlayer = new AiPlayer(id);
     aiPlayer.spawn();
+    aiPlayer.onDeath = (data) => {
+      io.sockets.emit("death", data);
+    }
     // console.log(`AI Player Joined -> ${aiPlayer.id}`);
     players.add(aiPlayer);
   }
@@ -271,18 +277,22 @@ setInterval(() => {
       //1% chance to generate a powerup 99% chance to generate non-powerup entities
       if(Math.random() < 0.01) {
         let powerupTypeRandomizer = Math.random();
-        if(powerupTypeRandomizer < 0.25) {
+        if(powerupTypeRandomizer < 0.20) {
           const speedUp = new SpeedUp();
           entities.add(speedUp);
-        } else if (powerupTypeRandomizer >= 0.25 && powerupTypeRandomizer < 0.5) {
+        } else if (powerupTypeRandomizer >= 0.20 && powerupTypeRandomizer < 0.40) {
           const double = new Doubler();
           entities.add(double);
-        } else if (powerupTypeRandomizer >= 0.5 && powerupTypeRandomizer < 0.75) {
+        } else if (powerupTypeRandomizer >= 0.40 && powerupTypeRandomizer < 0.60) {
           const invul = new Invulnerable();
           entities.add(invul);
-        } else {
+        } else if (powerupTypeRandomizer >= 0.60 && powerupTypeRandomizer < 0.80) {
           const magnet = new Magnet();
           entities.add(magnet);
+        } else {
+          const radar = new Radar();
+          entities.add(radar);
+
         }
         
       } else {
@@ -308,8 +318,9 @@ setInterval(() => {
     const entitiesInRadius = entities.getAllEntitiesWithinRadius(player.x, player.y, 2000);
 
     const [_, drops1] = applyCollisions(player, playersInRadius, players);
-    applyCollisions(player, entitiesInRadius, entities);
+    const [__, chestDrops] = applyCollisions(player, entitiesInRadius, entities);
     const drops = applyTrailCollisions(player, playersInRadius, entities);
+    
 
     if (Array.isArray(drops) && drops.length > 0) {
       drops.forEach((drop) => {
@@ -317,6 +328,12 @@ setInterval(() => {
       });
     } else if (Array.isArray(drops1) && drops1.length > 0) {
       drops1.forEach((drop) => {
+        entities.add(drop);
+      });
+    }
+
+    if(Array.isArray(chestDrops) && chestDrops.length > 0) {
+      chestDrops.forEach((drop) => {
         entities.add(drop);
       });
     }
@@ -331,7 +348,7 @@ setInterval(() => {
       playersInRadius.delete(player);
     }
 
-    const entitiesInRadius = entities.getAllEntitiesWithinRadius(player.x, player.y, 2000);
+    const entitiesInRadius = entities.getAllEntitiesWithinRadius(player.x, player.y, 6000);
     const powerupEntities = entities.getAllPowerupEntities();
 
     // Filter out all players not yet logged in.
@@ -363,9 +380,12 @@ setInterval(() => {
     }
   });
 
+
   // Send the leaderboard to all players
   const lb = [...players].sort((a, b) => b.score - a.score).map((a) => ({ score: a.score, id: a.id, name: a.name, kills: a.kills }));
   io.sockets.emit('lb', lb);
 
+
   frameId += 1;
 }, TICK_INTERVAL);
+

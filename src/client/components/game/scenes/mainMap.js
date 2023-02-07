@@ -14,6 +14,7 @@ const _serverType = Symbol("ServerType");
 const _timeLeft = Symbol("timeLeft");
 const _isWinner = Symbol("isWinner");
 const _powerUps = Symbol("Powerups");
+const _pickups = Symbol("pickups");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -86,6 +87,7 @@ export default class MainMap extends Phaser.Scene {
 
   create() {
     this.login();
+    this.hsv = Phaser.Display.Color.HSVColorWheel();
     const url = this.server === 'us1' ? 'https://www.chasetherainbow.app' : `https://space-doodles-${this.server}.herokuapp.com`;
 
     this.socket = io(this.prodMode ? url : undefined, {
@@ -216,7 +218,6 @@ export default class MainMap extends Phaser.Scene {
     });
 
     this.socket.on('death', (data) => {
-      console.log(data);
       eventCenter.emit('killNotif', data);
     })
     // Create key listener and check if player is boosting
@@ -230,10 +231,10 @@ export default class MainMap extends Phaser.Scene {
     this[_powerUps] = [];
     const entityIds = new Set();
     const entityMap = new Map();
+    this[_pickups] = [];
     this[_isWinner] = false;
 
     this.socket.on('frame', (frame) => {
-      console.log(frame.powerups);
       this.localPlayerSprite.pushFrame(frame.localPlayer);
       this[_timeLeft] = frame.timeLeft;
       this[_isWinner] = frame.isWinner;
@@ -264,6 +265,7 @@ export default class MainMap extends Phaser.Scene {
       });
 
       this[_powerUps] = frame.powerups;
+      this[_pickups] = frame.entities;
 
       frame.entities.forEach((entity) => {
         newEntityIds.add(entity.id);
@@ -273,6 +275,23 @@ export default class MainMap extends Phaser.Scene {
           // Create rainbow bit or fuel tank.
           if (entity.type === constants.ENTITY_TYPE.DEBUG_CIRCLE) {
             entityMap.set(entity.id, this.add.circle(entity.x, entity.y, 30, 'red').setDepth(5));
+          } else if(entity.type === constants.ENTITY_TYPE.TREASURE) {
+            console.log("process treasure");
+            this.treasure = this.add.sprite(entity.x, entity.y, entity.type).setDepth(5);
+            if(!this.treasureLife) {
+              this.treasureLife = this.add.text(
+                this.treasure.x, this.treasure.y, entity.life, 
+                {
+                  fontFamily: 'Pangolin',
+                  fontSize: '36px',
+                  align: 'center'
+                }
+                ).setDepth(100).setOrigin(0.5);
+            } else {
+              this.treasureLife.setPosition(this.treasure.x, this.treasure.y);
+              this.treasureLife.setVisible(true);
+            }
+            entityMap.set(entity.id, this.treasure);
           } else {
             entityMap.set(entity.id, this.add.sprite(entity.x, entity.y, entity.type).setDepth(5));
           }
@@ -280,6 +299,24 @@ export default class MainMap extends Phaser.Scene {
 
         function lerp(a, b, t) {
           return a + (b - a) * t;
+        }
+
+        if(entity.type == constants.ENTITY_TYPE.TREASURE && this.treasure && this.treasureLife) {
+          if(entity.isInvul) {
+            let top = this.hsv[Math.floor(Math.random() * 359)].color;
+            let left = this.hsv[Math.floor(Math.random() * 359)].color;
+            let right = this.hsv[Math.floor(Math.random() * 359)].color;
+            let bottom = this.hsv[Math.floor(Math.random() * 359)].color;
+            this.treasure.setTint(top, left, right, bottom);
+          } else {
+            this.treasure.clearTint();
+          }
+
+          if(this.treasure.x != entity.x || this.treasure.y != entity.y) {
+            this.treasure.setPosition(entity.x, entity.y);
+            this.treasureLife.setPosition(this.treasure.x, this.treasure.y);
+          }
+          this.treasureLife.setText(entity.life);
         }
 
         if (entity.collectedBy && entityMap.has(entity.id) && (entity.collectedBy === this.socket.id || playerIds.has(entity.collectedBy)) && !this.magnet.hasOwnProperty(entity.id)) {
@@ -316,6 +353,10 @@ export default class MainMap extends Phaser.Scene {
           // Rainbow bit or fuel tank is deleted.
           const e = entityMap.get(entityId);
           if (e) {
+            if(e == this.treasure) {
+              this.sound.play('powerupPickup', { loop: false });
+              this.treasureLife.setVisible(false);
+            }
             e.destroy();
             entityIds.delete(entityId);
             entityMap.delete(entityId);
@@ -364,7 +405,7 @@ export default class MainMap extends Phaser.Scene {
       this.spaceKeyPressed = false;
     }
     
-    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps]});
+    eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps], pickups: this.localPlayerSprite.radarActive ? this[_pickups] : []});
     if(this[_serverType] == 'Tournament') {
       eventCenter.emit("countdown", this[_timeLeft]);
     }

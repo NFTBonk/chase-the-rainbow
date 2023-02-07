@@ -22,7 +22,9 @@ module.exports = class EntitySet extends Set {
       return entity.type === constants.ENTITY_TYPE.INVULNERABLE ||
       entity.type === constants.ENTITY_TYPE.MAGNET ||
       entity.type === constants.ENTITY_TYPE.X2 ||
-      entity.type === constants.ENTITY_TYPE.SPEED_UP;
+      entity.type === constants.ENTITY_TYPE.SPEED_UP ||
+      entity.type === constants.ENTITY_TYPE.RADAR ||
+      entity.type === constants.ENTITY_TYPE.TREASURE;
     });
   }
 };

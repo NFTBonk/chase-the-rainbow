@@ -27,6 +27,9 @@ module.exports = class Player extends SocketEntity {
     // Player game attributes.
     this.name = 'Player';
     this.score = 0;
+    this.level = 0;
+    this.expRequired = 0;
+    this.previousExpRequired = 0;
     this.gas = Constants.GAS_INIT;
     this.gasMax = Constants.GAS_MAX_DEFAULT;
     this.boosting = false;
@@ -37,6 +40,7 @@ module.exports = class Player extends SocketEntity {
     this.doubleTime = 0;
     this.magnetTime = 0;
     this.invulTime = 0;
+    this.radarTime = 0;
     this.isTournament = 0;
     this.isWinner = false;
     this.kills = 0;
@@ -97,12 +101,9 @@ module.exports = class Player extends SocketEntity {
 
         if(this.doubleTime < 0) {
           this.doubleTime = 0;
+          this.radius = Constants.PLAYER_RADIUS;
         }
       } 
-
-      if(this.doubleTime <= 0) {
-        this.radius = Constants.PLAYER_RADIUS * 2;
-      }
 
       if(this.invulTime > 0) {
         this.invulTime -= dt;
@@ -120,9 +121,20 @@ module.exports = class Player extends SocketEntity {
         }
       } 
 
+      if(this.radarTime > 0) {
+        this.radarTime -= dt;
+
+        if(this.radarTime < 0) {
+          this.radarTime = 0;
+        }
+      } 
+
       // reset trail length after 1500 points, when player increases tier
-      if (this.score % 1500 === 0) {
+      if (this.score > this.expRequired) {
         this.trail.setLength(1);
+        this.previousExpRequired = this.expRequired
+        this.level++;
+        this.expRequired = Math.pow(this.level / Constants.PROGRESSION_DIVISOR, Constants.PROGRESSION_EXPONENT);
       }
     }
   }
@@ -145,7 +157,9 @@ module.exports = class Player extends SocketEntity {
     } else {
       this.score += Constants.SCORE_ADD_INCREMENT;
     }
-    this.trail.setLength(Math.floor(this.score % 1500 * Constants.SCORE_TO_TRAIL_LENGTH_RATIO) + 1);
+
+    this.trail.setLength(Math.floor(Math.min((this.score - this.previousExpRequired) * Constants.SCORE_TO_TRAIL_LENGTH_RATIO, 50)));
+
   }
 
   activateSpeedUp() {
@@ -153,7 +167,6 @@ module.exports = class Player extends SocketEntity {
   }
 
   activateDouble() {
-    console.log("activate double");
     this.doubleTime = Constants.POWERUP_DURATION;
     this.radius = Constants.PLAYER_RADIUS * 2;
   }
@@ -164,6 +177,10 @@ module.exports = class Player extends SocketEntity {
 
   activateMagnet() {
     this.magnetTime = Constants.POWERUP_DURATION;
+  }
+
+  activateRadar() {
+    this.radarTime = Constants.POWERUP_DURATION;
   }
 
   setName(name) {
@@ -259,7 +276,6 @@ module.exports = class Player extends SocketEntity {
       }
     });
 
-    this.send('die', {dead: this.name, killer: this.killer});
 
     this.trail.setLength(0);
     return dropPositions;
@@ -283,7 +299,9 @@ module.exports = class Player extends SocketEntity {
       magnetActive: this.magnetTime > 0,
       invulActive: this.invulTime > 0,
       doubleActive: this.doubleTime > 0,
-      speedUpActive: this.speedUpTime > 0
+      speedUpActive: this.speedUpTime > 0,
+      radarActive: this.radarTime > 0,
+      level: this.level
     };
   }
 
@@ -313,13 +331,13 @@ module.exports = class Player extends SocketEntity {
    *  If the scores are equal, both players are deleted.
    */
   onCollision(player, globalEntities) {
-    if (this.score >= player.score && player.state === Constants.PLAYER_STATE.PLAYING) {
+    if (this.level >= player.level && player.state === Constants.PLAYER_STATE.PLAYING) {
       //QUEUE DEATH NOTIFICATION
       //ADD DEATH COUNT
       this.kills++;
       return player.die(this.name);
     }
-    if (this.score <= player.score && this.state === Constants.PLAYER_STATE.PLAYING) {
+    if (this.level <= player.level && this.state === Constants.PLAYER_STATE.PLAYING) {
       player.kills++;
       return this.die(player.name);
     }
