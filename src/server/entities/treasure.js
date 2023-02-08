@@ -54,10 +54,6 @@ class Treasure extends Entity {
             numOfDrops--;
         }
 
-        console.log(dropPositions);
-        console.log(this.x);
-        console.log(this.y);
-
 
         
         //RELOCATE CHEST

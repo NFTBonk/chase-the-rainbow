@@ -15,6 +15,7 @@ const _timeLeft = Symbol("timeLeft");
 const _isWinner = Symbol("isWinner");
 const _powerUps = Symbol("Powerups");
 const _pickups = Symbol("pickups");
+const _killQueueTimer = Symbol("qTimer");
 // eslint-disable-next-line no-unused-vars
 
 export default class MainMap extends Phaser.Scene {
@@ -54,6 +55,7 @@ export default class MainMap extends Phaser.Scene {
     this.respawnButton.src = '/deathScreen';
 
     this.loggedIn = false;
+    this[_killQueueTimer] = 0;
   }
 
   login() {
@@ -392,11 +394,17 @@ export default class MainMap extends Phaser.Scene {
     }, 100);
   }
 
-  update() {
+  update(time, delta) {
     // background movement
     this.clouds.setTilePosition(this.cameras.main.scrollX, this.cameras.main.scrollY);
     this.stars.setTilePosition(this.cameras.main.scrollX * this.config.starScrollFactor, this.cameras.main.scrollY * this.config.starScrollFactor);
   
+    this[_killQueueTimer] += delta;
+
+    if(this[_killQueueTimer] > 1000) {
+      this[_killQueueTimer] = 0;
+      eventCenter.emit('showKillQueue');
+    }
 
     const spacebar = this.spaceKeyPressed;
     if (this.cursors.space.isDown || this.isBoostButtonPressed) {
