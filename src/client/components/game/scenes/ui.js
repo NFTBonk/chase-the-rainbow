@@ -165,7 +165,12 @@ class Ui extends Phaser.Scene {
       }
     ).setDepth(100);
     this.levelupTxt.setAlpha(0);
+  }
 
+  showLevelupPrompt() {
+    if(this.levelUPTL) {
+      this.levelUPTL.destroy();
+    }
     this.levelUPTL =  this.tweens.createTimeline();
     this.levelUPTL.add({
       targets: this.levelupTxt,
@@ -178,9 +183,7 @@ class Ui extends Phaser.Scene {
       alpha: 0,
       offset: "+=1000"
     });
-  }
 
-  showLevelupPrompt() {
     this.levelUPTL.play();
   }
 
