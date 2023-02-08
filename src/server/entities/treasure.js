@@ -50,7 +50,7 @@ class Treasure extends Entity {
             let x = this.x + Math.random() * radius * sign;
             sign = Math.random() > 0.5 ? 1 : -1;
             let y = this.y + Math.random() * radius * sign;
-            dropPositions.push({x: x, y: y})
+            dropPositions.push({x: Math.min(Math.max(100, x), Constants.MAP_SIZE - 200), y: Math.min(Math.max(100, y), Constants.MAP_SIZE - 200)})
             numOfDrops--;
         }
 
