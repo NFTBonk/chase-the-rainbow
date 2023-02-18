@@ -55,8 +55,9 @@ class Ui extends Phaser.Scene {
     eventCenter.on('minimap', this.minimap.updatePlayerPositions, this.minimap); //listen for minimap updates
     eventCenter.on('powerups', this.powerupHUD.updatePowerupTimes, this.powerupHUD); //listen for powerup updates
     eventCenter.on('countdown', this.updateTimer, this); //listen for timer updates
-    eventCenter.on('killCount', this.updateKillCount, this); //listen for timer updates
-    eventCenter.on('killNotif', this.killNotif.addToQueue, this.killNotif); //listen for timer updates
+    eventCenter.on('killCount', this.updateKillCount, this); //listen for killcount updates
+    eventCenter.on('killNotif', this.killNotif.addToQueue, this.killNotif); //listen for kill updates
+    eventCenter.on('showKillQueue', this.killNotif.showQueue, this.killNotif); //listen for killqueue timer
     eventCenter.on('levelup', this.showLevelupPrompt, this); //listen for timer updates
 
     this.scale.on('resize', (gameSize, baseSize, displaySize, previousWidth, previousHeight) => {
@@ -165,7 +166,12 @@ class Ui extends Phaser.Scene {
       }
     ).setDepth(100);
     this.levelupTxt.setAlpha(0);
+  }
 
+  showLevelupPrompt() {
+    if(this.levelUPTL) {
+      this.levelUPTL.destroy();
+    }
     this.levelUPTL =  this.tweens.createTimeline();
     this.levelUPTL.add({
       targets: this.levelupTxt,
@@ -178,9 +184,7 @@ class Ui extends Phaser.Scene {
       alpha: 0,
       offset: "+=1000"
     });
-  }
 
-  showLevelupPrompt() {
     this.levelUPTL.play();
   }
 
