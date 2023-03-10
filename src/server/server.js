@@ -44,6 +44,10 @@ app.get('/playerCount', (request, response, next) => {
   response.send({ count: players.size });
 });
 
+app.get('/serverInfo', (request, response, next) => {
+  response.send({count: players.size, type: serverType, isCooldown: onCooldown, endTime: endTime});
+});
+
 app.use(express.static(path.join(__dirname, '../../public')));
 app.use('/', express.static(path.join(__dirname, '../../dist')));
 app.use(bodyParser.json());
