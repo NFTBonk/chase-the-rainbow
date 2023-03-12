@@ -33,7 +33,7 @@ require('isomorphic-fetch');
 const app = express();
 const httpServer = createServer(app);
 
-const serverType = Constants.SERVER_TYPE.NORMAL;
+const serverType = Constants.SERVER_TYPE.TOURNAMENT;
 
 // CHANGE THIS LATER TO ONLY TRUSTED DOMAINS!!!!
 const io = new Server(httpServer, { cors: { origin: '*' } });
@@ -45,7 +45,7 @@ app.get('/playerCount', (request, response, next) => {
 });
 
 app.get('/serverInfo', (request, response, next) => {
-  response.send({count: players.size, type: serverType, isCooldown: onCooldown, endTime: endTime});
+  response.send({count: players.size, type: serverType, isCooldown: onCooldown, endTime: onCooldown ? new Date(endTime).setMinutes(startTime.getMinutes() + Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) : endTime});
 });
 
 app.use(express.static(path.join(__dirname, '../../public')));
