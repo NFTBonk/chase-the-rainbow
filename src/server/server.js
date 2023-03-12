@@ -222,6 +222,7 @@ let lastTime = new Date().getTime();
 let onCooldown = false;
 let startTime = new Date();
 let endTime = new Date();
+let roundCount = 0;
 setInterval(() => {
   // Log delta interval.
   const currentTime = new Date();
@@ -237,6 +238,7 @@ setInterval(() => {
         player.die();
       });
       onCooldown = true;
+      roundCount++;
       //UPLOAD HIGHEST SCORE TO LEADERBOARD
       return;
     } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) < Constants.TOURNAMENT_DURATION && onCooldown) {
@@ -376,6 +378,7 @@ setInterval(() => {
       powerups: powerupEntities,
       timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
       isWinner: player.isWinner,
+      roundCount: roundCount
     };
     if (player.ai) {
       player.tick(entitiesInRadiusNetworkModel);
