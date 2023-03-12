@@ -221,9 +221,9 @@ class Ui extends Phaser.Scene {
     return String(num).padStart(2, '0');
   }
 
-  updateTimer(timeLeft) { 
-    if(timeLeft > 0) {
-      this.timer.setText(this.pad2Digits(Math.floor(timeLeft / 60)) + ":" + this.pad2Digits(Math.floor(timeLeft % 60)));
+  updateTimer(info) { 
+    if(info.timeLeft > 0) {
+      this.timer.setText(`Round ${info.round} - ${this.pad2Digits(Math.floor(info.timeLeft / 60))}:${this.pad2Digits(Math.floor(info.timeLeft % 60))}`);
     }
   }
 

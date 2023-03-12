@@ -222,7 +222,7 @@ let lastTime = new Date().getTime();
 let onCooldown = false;
 let startTime = new Date();
 let endTime = new Date();
-let roundCount = 0;
+let roundCount = 1;
 setInterval(() => {
   // Log delta interval.
   const currentTime = new Date();

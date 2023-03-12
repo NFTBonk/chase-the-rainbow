@@ -12,6 +12,7 @@ import DeathScreen from '../../deathScreen/index';
 const _playerMap = Symbol("PlayerMap");
 const _serverType = Symbol("ServerType");
 const _timeLeft = Symbol("timeLeft");
+const _roundNo = Symbol("roundNo");
 const _isWinner = Symbol("isWinner");
 const _powerUps = Symbol("Powerups");
 const _pickups = Symbol("pickups");
@@ -239,6 +240,7 @@ export default class MainMap extends Phaser.Scene {
     this.socket.on('frame', (frame) => {
       this.localPlayerSprite.pushFrame(frame.localPlayer);
       this[_timeLeft] = frame.timeLeft;
+      this[_roundNo] = frame.roundCount;
       this[_isWinner] = frame.isWinner;
       const newPlayerIds = new Set();
       const newEntityIds = new Set();
@@ -415,7 +417,7 @@ export default class MainMap extends Phaser.Scene {
     
     eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps], pickups: this.localPlayerSprite.radarActive ? this[_pickups] : []});
     if(this[_serverType] == 'Tournament') {
-      eventCenter.emit("countdown", this[_timeLeft]);
+      eventCenter.emit("countdown", {timer: this[_timeLeft], round: this[_roundNo]});
     }
     
     if (spacebar !== this.spaceKeyPressed) {
