@@ -8,6 +8,7 @@ import Button from './Button';
 import mp3 from '../../images/PassTheRainbow.mp3';
 import Start from '../../images/volume-up.png';
 import Stop from '../../images/no-sound.png';
+import { Web3Button } from '@web3modal/react';
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -98,14 +99,9 @@ function AudioPlayer() {
   );
 }
 
-function Header({ walletAddress, setWallet, setStatus }) {
-  const connectWalletPressed = async () => {
-    const walletResponse = await wallet.connectWallet();
-    setStatus(walletResponse.status);
-    setWallet(walletResponse.address);
-  };
+function Header({ walletAddress }) {
 
-  const walletConnected = walletAddress.length > 0;
+  const walletConnected = walletAddress?.length > 0;
 
   return (
     <HeaderContainer>
@@ -142,12 +138,13 @@ function Header({ walletAddress, setWallet, setStatus }) {
         )}
 
         {!walletConnected && (
-        <Button
-          priority="text"
-          onClick={connectWalletPressed}
-        >
-          Connect Wallet
-        </Button>
+          <Web3Button/>
+        // <Button
+        //   priority="text"
+        //   onClick={connectWalletPressed}
+        // >
+        //   Connect Wallet
+        // </Button>
         )}
       </HeaderLeft>
     </HeaderContainer>

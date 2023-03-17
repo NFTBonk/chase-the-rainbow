@@ -57,12 +57,15 @@
     "@faker-js/faker": "^6.1.2",
     "@mui/icons-material": "^5.4.2",
     "@mui/material": "^5.4.3",
+    "@web3modal/ethereum": "^2.2.1",
+    "@web3modal/react": "^2.2.1",
     "axios": "^0.27.2",
     "bad-words": "^3.0.4",
     "body-parser": "^1.19.1",
     "cors": "^2.8.5",
     "detect-collisions": "^3.2.6",
     "dotenv": "^16.0.0",
+    "ethers": "^5.7.2",
     "express": "^4.17.2",
     "isomorphic-fetch": "^3.0.0",
     "mongodb": "^4.3.1",
@@ -80,6 +83,7 @@
     "styled-normalize": "^8.0.7",
     "swiper": "^8.3.1",
     "uuid": "^3.4.0",
+    "wagmi": "^0.12.1",
     "webpack": "^4.41.2",
     "webpack-node-externals": "^3.0.0"
   }
