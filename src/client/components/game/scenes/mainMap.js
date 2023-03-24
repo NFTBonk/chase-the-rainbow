@@ -417,7 +417,7 @@ export default class MainMap extends Phaser.Scene {
     
     eventCenter.emit("minimap", {x: this.localPlayerSprite.x, y: this.localPlayerSprite.y, visible: this.localPlayerSprite.visible, playerMap: this[_playerMap], powerups: this[_powerUps], pickups: this.localPlayerSprite.radarActive ? this[_pickups] : []});
     if(this[_serverType] == 'Tournament') {
-      eventCenter.emit("countdown", {timer: this[_timeLeft], round: this[_roundNo]});
+      eventCenter.emit("countdown", {timeLeft: this[_timeLeft], round: this[_roundNo]});
     }
     
     if (spacebar !== this.spaceKeyPressed) {
