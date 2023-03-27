@@ -225,6 +225,15 @@ module.exports = class Player extends SocketEntity {
     this.trail.resetPosition(this.x, this.y);
   }
 
+  removePowerups() {
+    this.magnetTime = 0;
+    this.speedUpTime = 0;
+    this.doubleTime = 0;
+    this.magnetTime = 0;
+    this.invulTime = 0;
+    this.radarTime = 0;
+  }
+
   die(killer) {
     function lerp(v0, v1, t) {
       return v0 * (1 - t) + v1 * t;

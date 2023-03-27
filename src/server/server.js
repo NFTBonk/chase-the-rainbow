@@ -235,6 +235,7 @@ setInterval(() => {
         if(player.id == winner.id) {
           player.setWinner();
         }
+        player.removePowerups();
         player.die();
       });
       onCooldown = true;
