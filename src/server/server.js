@@ -230,7 +230,7 @@ setInterval(() => {
     let mins = currentTime.getMinutes();
     if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) >= Constants.TOURNAMENT_DURATION && !onCooldown) {
       //GET WINNER
-      let winner = [...players].sort((a, b) =>b.score - a.score)[0];
+      let winner = [...players].filter((element) => !element.ai).sort((a, b) =>b.score - a.score)[0];
       players.forEach((player) => {
         if(player.id == winner.id) {
           player.setWinner();
