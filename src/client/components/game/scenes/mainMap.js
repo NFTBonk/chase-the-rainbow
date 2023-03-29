@@ -238,10 +238,10 @@ export default class MainMap extends Phaser.Scene {
     this[_isWinner] = false;
 
     this.socket.on('frame', (frame) => {
+      this[_isWinner] = frame.isWinner;
       this.localPlayerSprite.pushFrame(frame.localPlayer);
       this[_timeLeft] = frame.timeLeft;
       this[_roundNo] = frame.roundCount;
-      this[_isWinner] = frame.isWinner;
       const newPlayerIds = new Set();
       const newEntityIds = new Set();
 

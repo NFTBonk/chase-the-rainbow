@@ -232,7 +232,7 @@ setInterval(() => {
       //GET WINNER
       let winner = [...players].filter((element) => !element.ai).sort((a, b) =>b.score - a.score)[0];
       players.forEach((player) => {
-        if(player.id == winner.id) {
+        if(winner && player.id == winner.id) {
           player.setWinner();
         }
         player.removePowerups();
