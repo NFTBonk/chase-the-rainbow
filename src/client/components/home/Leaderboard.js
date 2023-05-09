@@ -82,6 +82,27 @@ const LeaderboardPanel = styled.div`
   }
 `;
 
+const TournamentPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 30px;
+  text {
+    font-family: "Modern Warfare", Arial, Helvetica, sans-serif;
+  }
+  @media (max-width: 1160) {
+    text {
+      display: none;
+    }
+  }
+
+  ${mq.lts} {
+    & + & {
+      margin-top: 30px;
+    }
+  }
+`;
+
 const LeaderboardRow = styled.div`
   display: grid;
   grid-template-columns: 37% 36% 27%;
@@ -113,6 +134,11 @@ const LeaderboardText = styled.div`
   font-size: 13px;
 `;
 
+const LeaderboardTextRight = styled.div`
+  font-weight: bold;
+  font-size: 13px;
+  text-align: right;
+`;
 const H1 = styled.h1`
   margin-top: 0;
   margin-bottom: 20px;
@@ -163,11 +189,19 @@ const MoonGif = styled.img`
 
 function Leaderboard() {
   const [rankings, setRankings] = useState({});
+  const [tournament, setTournament] = useState({});
 
   useEffect(async () => {
     try {
       let response = await axios.get('http://localhost:3000/leaderBoard');
       setRankings(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+      let response = await axios.get('https://chasetherainbow.app/twinner');
+      setTournament(response.data);
     } catch (e) {
       console.log(e);
     }
@@ -178,8 +212,8 @@ function Leaderboard() {
       <LeaderboardContainer>
         <PlanetImg src={Planet} alt="planet" />
         <NoodleImg src={Noodle1} alt="planet" />
-
         <LeaderboardSection>
+        
         <LeaderboardPanel>
           <H1>Global </H1> <h4>Leaderboard</h4>
           {rankings?.global?.map((social,index) => (
@@ -257,6 +291,26 @@ function Leaderboard() {
           ))}
         </LeaderboardPanel>
         </LeaderboardSection>
+        <TournamentPanel>
+          <H1>Tournament</H1> <h4>Leaderboard</h4>
+          {
+            tournament?.tourneyWinners?.map((social, index) => 
+              <LeaderboardRow key={index}>
+                <LeaderboardText>
+                  {`${social.name}`}
+                </LeaderboardText>
+                  <a href = {social.doodId.split(' ')[social.doodId.split(' ').length-2] === 'Doodle' ? `https://opensea.io/assets/ethereum/0x620b70123fb810f6c653da7644b5dd0b6312e4d8/${social.doodId.split('#')[social.doodId.split('#').length-1]}` : `https://opensea.io/assets/ethereum/0x8153f4b100def4b1480b18dd159e64e68f1ad4c7/${social.doodId.split('#')[social.doodId.split('#').length-1]}`} target="_blank">
+                    <LeaderboardText>
+                      {`${social.doodId.split(' ')[social.doodId.split(' ').length-2] + ' ' + social.doodId.split(' ')[social.doodId.split(' ').length-1]}`}
+                    </LeaderboardText>
+                  </a>
+                <LeaderboardTextRight>
+                  {`${social.score}`}
+                </LeaderboardTextRight>
+              </LeaderboardRow>
+            )
+          }
+        </TournamentPanel>
       </LeaderboardContainer>
       <MissionStatement>
         <MissionStatementSummary>

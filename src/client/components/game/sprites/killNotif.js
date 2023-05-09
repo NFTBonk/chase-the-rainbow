@@ -46,7 +46,7 @@ export default class KillNotif extends Phaser.GameObjects.Container {
   }
 
   showQueue() {
-    console.log(this.killQueue);
+    // console.log(this.killQueue);
     if(this.killQueue.length > 0 && !this.animationTL.isPlaying()) {
       let killInfo = this.killQueue.shift();
       this.killText.setText(killInfo.killer + " has pwned " + killInfo.dead + "'s ship");

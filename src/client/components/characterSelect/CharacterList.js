@@ -89,30 +89,84 @@ export default function CharacterList({
   useEffect(() => {
     const getResponse = async (url) => {
       try {
-        const res = await fetch(`${url}/playerCount?t=${Date.now()}`);
+        const res = await fetch(`${url}/serverInfo?t=${Date.now()}`);
         const data = await res.json();
-        return data.count ? { success: true, count: data.count } : { success: false };
+        console.log(res)
+        return data.count ? { success: true, count: data.count, type: data.type, isCooldown: data.isCooldown, endTime: data.endTime } : { success: false };
       } catch (error) {
         return { success: false, error };
       }
     };
     const fetchData = async () => {
-      const cnt = await getResponse('https://www.chasetherainbow.app');
+      // const cnt = await getResponse('https://www.chasetherainbow.app');
+      const cnt = await getResponse('http://localhost:3000');
+      //UPDATE TEXT IF TOURNAMENT
       if (cnt.success) {
-        setUsa(cnt.count >= Constants.MAX_PLAYERS ? `${cnt.count} players (FULL)` : `${cnt.count} players`);
+        if(cnt.type == "Tournament") {
+          if(!cnt.isCooldown) {
+            setUsa(cnt.count >= Constants.MAX_PLAYERS ? `[TOURNAMENT] (${cnt.count} players [FULL] - Ends at ${new Date(cnt.endTime).toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})` : `(${cnt.count} players - Ends at ${new Date(cnt.endTime).toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})`);
+          } else {
+            setUsa(`[TOURNAMENT] (Next round starts at ${new Date(cnt.endTime).toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})`);
+          }
+        } else {
+          setUsa(cnt.count >= Constants.MAX_PLAYERS ? `(${cnt.count} players [FULL])` : `(${cnt.count} players)`);
+        }
       } else {
         setUsa('OFFLINE');
       }
 
       const cnt2 = await getResponse('https://space-doodles-us2.herokuapp.com');
       if (cnt2.success) {
-        setUsa2(cnt2.count >= Constants.MAX_PLAYERS ? `${cnt2.count} players (FULL)` : `${cnt2.count} players`);
+        if(cnt2.type == "Tournament") {
+          if(cnt2.isCooldown) {
+            setUsa(cnt2.count >= Constants.MAX_PLAYERS ? `[TOURNAMENT] (${cnt2.count} players [FULL] - Ends at ${cnt2.endTime.toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})` : `(${cnt2.count} players - Ends at ${cnt2.endTime.toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})`);
+          } else {
+            setUsa(`[TOURNAMENT] (Next round starts at ${cnt2.endTime.toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})`);
+          }
+        } else {
+          setUsa(cnt2.count >= Constants.MAX_PLAYERS ? `(${cnt2.count} players [FULL])` : `(${cnt2.count} players)`);
+        }
       } else {
         setUsa2('OFFLINE');
       }
       const cnt3 = await getResponse('https://space-doodles-eu1.herokuapp.com');
       if (cnt3.success) {
-        setEu(cnt3.count >= Constants.MAX_PLAYERS ? `${cnt3.count} players (FULL)` : `${cnt3.count} players`);
+        if(cnt3.type == "Tournament") {
+          if(cnt3.isCooldown) {
+            setUsa(cnt3.count >= Constants.MAX_PLAYERS ? `[TOURNAMENT] (${cnt3.count} players [FULL] - Ends at ${cnt3.endTime.toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})` : `(${cnt3.count} players - Ends at ${cnt3.endTime.toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})`);
+          } else {
+            setUsa(`[TOURNAMENT] (Next round starts at ${cnt3.endTime.toLocaleTimeString('default', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })})`);
+          }
+        } else {
+          setUsa(cnt3.count >= Constants.MAX_PLAYERS ? `(${cnt3.count} players [FULL])` : `(${cnt3.count} players)`);
+        }
       } else {
         setEu('OFFLINE');
       }
@@ -147,12 +201,12 @@ export default function CharacterList({
           name="radio-buttons-group"
           onChange={(e) => serverChange(e.target.value, { us1: usaCount, us2: usa2Count, eu1: euCount })}
         >
-          <FormControlLabel value="us1" control={<Radio />} label={`USA (${usaCount})`} />
-          <FormControlLabel value="us2" control={<Radio />} label={`USA 2 (${usa2Count})`} />
-          <FormControlLabel value="eu1" control={<Radio />} label={`Europe (${euCount})`} />
+          <FormControlLabel value="us1" control={<Radio />} label={`USA ${usaCount}`} />
+          <FormControlLabel value="us2" control={<Radio />} label={`USA 2 ${usa2Count}`} />
+          <FormControlLabel value="eu1" control={<Radio />} label={`Europe ${euCount}`} />
         </RadioGroup>
       </FormControl>
-      {/* <UsernameTitle>🦈 Tournament Code 🦈</UsernameTitle>
+      {/* <UsernameTitle>🦈 Tournament Code 🦈</UsernameTitle> 
       <TextField
         sx={{
           width: 376,

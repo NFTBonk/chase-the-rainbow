@@ -33,7 +33,7 @@ require('isomorphic-fetch');
 const app = express();
 const httpServer = createServer(app);
 
-const serverType = Constants.SERVER_TYPE.NORMAL;
+const serverType = Constants.SERVER_TYPE.TOURNAMENT;
 
 // CHANGE THIS LATER TO ONLY TRUSTED DOMAINS!!!!
 const io = new Server(httpServer, { cors: { origin: '*' } });
@@ -42,6 +42,10 @@ app.use(cors());
 
 app.get('/playerCount', (request, response, next) => {
   response.send({ count: players.size });
+});
+
+app.get('/serverInfo', (request, response, next) => {
+  response.send({count: players.size, type: serverType, isCooldown: onCooldown, endTime: onCooldown ? new Date(endTime).setMinutes(endTime.getMinutes() + Constants.TOURNAMENT_COOLDOWN) : endTime});
 });
 
 app.use(express.static(path.join(__dirname, '../../public')));
@@ -218,6 +222,7 @@ let lastTime = new Date().getTime();
 let onCooldown = false;
 let startTime = new Date();
 let endTime = new Date();
+let roundCount = 1;
 setInterval(() => {
   // Log delta interval.
   const currentTime = new Date();
@@ -225,14 +230,16 @@ setInterval(() => {
     let mins = currentTime.getMinutes();
     if(mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) >= Constants.TOURNAMENT_DURATION && !onCooldown) {
       //GET WINNER
-      let winner = [...players].sort((a, b) =>b.score - a.score)[0];
+      let winner = [...players].filter((element) => !element.ai).sort((a, b) =>b.score - a.score)[0];
       players.forEach((player) => {
-        if(player.id == winner.id) {
+        if(winner && player.id == winner.id) {
           player.setWinner();
         }
+        player.removePowerups();
         player.die();
       });
       onCooldown = true;
+      roundCount++;
       //UPLOAD HIGHEST SCORE TO LEADERBOARD
       return;
     } else if (mins % (Constants.TOURNAMENT_DURATION + Constants.TOURNAMENT_COOLDOWN) < Constants.TOURNAMENT_DURATION && onCooldown) {
@@ -372,6 +379,7 @@ setInterval(() => {
       powerups: powerupEntities,
       timeLeft: serverType == Constants.SERVER_TYPE.TOURNAMENT ? (endTime.getTime() - lastTime)/ 1000 : 0,
       isWinner: player.isWinner,
+      roundCount: roundCount
     };
     if (player.ai) {
       player.tick(entitiesInRadiusNetworkModel);
