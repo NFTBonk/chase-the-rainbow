@@ -77,7 +77,9 @@ class Ui extends Phaser.Scene {
       this.controlInfo.setPosition(MARGIN_LEFT + this.fuel.width + this.fuelContainer.x, this.fuelContainer.y);
       this.lb.setPosition(baseSize.width * (1 - cullFactorWidth / 2) - MARGIN_LEFT, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP);
       this.killNotif.setPosition(baseSize.width * 0.5, baseSize.height * (cullFactorHeight / 2) + MARGIN_TOP * 3);
-      this.joyStick.setPosition(baseSize.width * cullFactorWidth / 2 + 275, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP -  200,)
+      if(this.joyStick) {
+        this.joyStick.setPosition(baseSize.width * cullFactorWidth / 2 + 275, baseSize.height * (1 - cullFactorHeight / 2) - MARGIN_TOP -  200,)
+      }
       if(displaySize._parent.height > displaySize._parent.width) {
         this.scene.launch("rotate");
       } else {
